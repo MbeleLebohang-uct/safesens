@@ -1,17 +1,13 @@
-"""
-WSGI config for safesens project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
-"""
-
 import os
+import sys
 
-from django.core.wsgi import get_wsgi_application
-from dj_static import Cling
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'safesens.settings')
+sys.path.insert(0, os.path.dirname(__file__))
 
-application = Cling(get_wsgi_application())
+
+def application(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    message = 'It works!\n'
+    version = 'Python v' + sys.version.split()[0] + '\n'
+    response = '\n'.join([message, version])
+    return [response.encode()]

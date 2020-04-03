@@ -29,11 +29,12 @@ DEBUG = get_bool_from_env("DEBUG", True)
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+PUBLIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../public_html"))
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 ALLOWED_HOSTS = get_list(
-    os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, safesense.co.za")
+    os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, upsitec.co.za, www.upsitec.co.za")
 )
 
 
@@ -157,7 +158,9 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+MEDIA_URL = '/media'
+STATIC_ROOT = os.path.join(PUBLIC_DIR, 'static')
+MEDIA_ROOT = os.path.join(PUBLIC_DIR, 'media')
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
