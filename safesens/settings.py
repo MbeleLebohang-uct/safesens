@@ -89,11 +89,17 @@ WSGI_APPLICATION = 'safesens.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': get_value_from_env("DBNAME", 'safesens_test'),
+        'USER': get_value_from_env("DBUSER", 'safesens_test_user'),
+        'PASSWORD': get_value_from_env("DBPASSWORD", 'ElephantsFly'),
+        'HOST': get_value_from_env("DBHOST", 'srv43.hostserv.co.za'),
+        'PORT': get_value_from_env("DBPORT", '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
