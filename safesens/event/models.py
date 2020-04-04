@@ -16,5 +16,5 @@ class Event(models.Model):
     device                      = models.ForeignKey(Device, on_delete=models.CASCADE)
 
     class Meta:
-        app_label = "events"
+        app_label = "event"
         ordering = ("imei","device_time_date",)
