@@ -1,6 +1,7 @@
 db.sqlite3
 media
 env/
+dev-env/
 **/*.pyc
 
 # Visual Studio Code # 
