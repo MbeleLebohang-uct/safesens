@@ -34,7 +34,7 @@ PUBLIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../publ
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 ALLOWED_HOSTS = get_list(
-    os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, upsitec.co.za, www.upsitec.co.za")
+    os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, upsitec.club, www.upsitec.club")
 )
 
 
@@ -90,10 +90,10 @@ WSGI_APPLICATION = 'safesens.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': get_value_from_env("DBNAME", 'safesens_test'),
-        'USER': get_value_from_env("DBUSER", 'safesens_test_user'),
+        'NAME': get_value_from_env("DBNAME", 'development'),
+        'USER': get_value_from_env("DBUSER", 'db_admin'),
         'PASSWORD': get_value_from_env("DBPASSWORD", 'ElephantsFly'),
-        'HOST': get_value_from_env("DBHOST", 'srv43.hostserv.co.za'),
+        'HOST': get_value_from_env("DBHOST", 'n3plcpnl0283.prod.ams3.secureserver.net'),
         'PORT': get_value_from_env("DBPORT", '3306'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
