@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Custom apps
-    'pages',
+    'safesens.pages',
 ]
 
 MIDDLEWARE = [
