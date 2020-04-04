@@ -87,4 +87,12 @@ class Device(models.Model):
 
     users                        = models.ManyToManyField(User)
 
-        
+    class Meta:
+        app_label = "device"
+        ordering = ("unit_name",)
+        permissions = (
+            (
+                "manage_devices",
+                pgettext_lazy("Permission description", "Manage devices."),
+            ),
+        )

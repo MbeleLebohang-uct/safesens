@@ -14,3 +14,7 @@ class Event(models.Model):
     device_time_date            = models.DateTimeField(("contract end date"), default=datetime.date.today)
     server_time                 = models.IntegerField(("GSM signal"), default=0)
     device                      = models.ForeignKey(Device, on_delete=models.CASCADE)
+
+    class Meta:
+        app_label = "events"
+        ordering = ("imei","device_time_date",)
