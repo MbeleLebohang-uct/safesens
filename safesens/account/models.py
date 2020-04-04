@@ -82,34 +82,11 @@ class User(PermissionsMixin, AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
 
-    manager = models.OneToOneField('self', on_delete=models.CASCADE)
+    manager = models.OneToOneField('self', null=True, on_delete=models.CASCADE)
 
     USERNAME_FIELD = "email"
 
     objects = UserManager()
-
-    class Meta:
-        permissions = (
-            (
-                "manage_users",
-                pgettext_lazy("Permission description", "Manage customers."),
-            ),
-            (
-                "manage_staff", 
-                pgettext_lazy("Permission description", "Manage staff.")),
-            (
-                "is_technician",
-                pgettext_lazy("Permission description", "Is a technician responsible for device maintainance."),
-            ),
-            (
-                "is_contractor",
-                pgettext_lazy("Permission description", "Is a contructor who is a direct customer of KovcoLab."),
-            ),
-            (
-                "is_contractor_customer",
-                pgettext_lazy("Permission description", "Is a customer of KovcoLab contructor who actually owns the device."),
-            ),
-        )
 
     def get_full_name(self):
         if self.first_name or self.last_name:
