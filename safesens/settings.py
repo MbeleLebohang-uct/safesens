@@ -37,9 +37,7 @@ ALLOWED_HOSTS = get_list(
     os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, upsitec.club, www.upsitec.club")
 )
 
-
 # Application definition
-
 INSTALLED_APPS = [
     # Default apps
     'django.contrib.admin',
@@ -51,6 +49,9 @@ INSTALLED_APPS = [
     
     # Custom apps
     'safesens.pages',
+    'safesens.event',
+    'safesens.device',
+    'safesens.account',
 ]
 
 MIDDLEWARE = [
@@ -100,6 +101,8 @@ DATABASES = {
         }
     }
 }
+
+AUTH_USER_MODEL = "account.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
