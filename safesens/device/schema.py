@@ -1,13 +1,22 @@
 import graphene
-from django.db.models import Q
+import django_filters
+from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
+
+from ..account.models import User
 from .models import Device
-from .types import DeviceType
+
+class DeviceFilter(django_filters.FilterSet):
+    class Meta:
+        model = Device
+        fields = ['imei']
+
+class DeviceNode(DjangoObjectType):
+    class Meta:
+        model = Device
+        fields = []
+        interfaces = (graphene.relay.Node, )
 
 class DeviceQuery(graphene.ObjectType):
-    device = graphene.Field(DeviceType, imei=graphene.String())
-
-    def resolve_device(self, info, imei=None, **kwargs):
-        if imei:
-            return Device.objects.get(Q(imei=imei))
-
-        return None
+    device = graphene.relay.Node.Field(DeviceNode)
+    all_devices = DjangoFilterConnectionField(DeviceNode, filterset_class=DeviceFilter)

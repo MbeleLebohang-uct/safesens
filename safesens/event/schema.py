@@ -1,17 +1,22 @@
 import graphene
-from graphene_django.types import DjangoObjectType
-from django.db.models import Q
+import django_filters
+from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
+
+from ..account.models import User
 from .models import Event
 
-class EventType(DjangoObjectType):
+class EventFilter(django_filters.FilterSet):
     class Meta:
         model = Event
+        fields = ['imei']
+
+class EventNode(DjangoObjectType):
+    class Meta:
+        model = Event
+        fields = []
+        interfaces = (graphene.relay.Node, )
 
 class EventQuery(graphene.ObjectType):
-    events = graphene.List(EventType, imei=graphene.String())
-
-    def resolve_events(self, info, imei=None, **kwargs):
-        if imei:
-            return Event.objects.filter(Q(imei=imei))
-
-        return None
+    event = graphene.relay.Node.Field(EventNode)
+    all_events = DjangoFilterConnectionField(EventNode, filterset_class=EventFilter)
