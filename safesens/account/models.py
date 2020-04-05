@@ -130,3 +130,6 @@ class User(PermissionsMixin, AbstractBaseUser):
 
     def is_contractor_customer(self):
         return self.user_type == CustomerTypes.CONTRACTOR_CUSTOMER
+
+    def __str__(self):
+        return self.email

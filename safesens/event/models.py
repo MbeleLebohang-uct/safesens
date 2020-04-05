@@ -15,6 +15,9 @@ class Event(models.Model):
     server_time                 = models.IntegerField(("GSM signal"), default=0)
     device                      = models.ForeignKey(Device, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.imei
+
     class Meta:
         app_label = "event"
         ordering = ("imei","device_time_date",)

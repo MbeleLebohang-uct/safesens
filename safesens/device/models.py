@@ -87,6 +87,9 @@ class Device(models.Model):
 
     users                        = models.ManyToManyField(User)
 
+    def __str__(self):
+        return self.imei
+
     class Meta:
         app_label = "device"
         ordering = ("unit_name",)
