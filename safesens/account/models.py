@@ -82,7 +82,7 @@ class User(PermissionsMixin, AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
 
-    manager = models.OneToOneField('self', null=True, on_delete=models.CASCADE)
+    manager = models.ForeignKey('self', null=True, related_name='user', on_delete=models.CASCADE)
 
     USERNAME_FIELD = "email"
 
