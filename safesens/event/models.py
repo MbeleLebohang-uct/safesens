@@ -11,7 +11,7 @@ class Event(models.Model):
     ch5                         = models.FloatField(("Channel 5 reading"), default=0.0)
     battery_voltage             = models.FloatField(("Battery voltage reading"), default=0.0)
     gsm_signal                  = models.IntegerField(("GSM signal"), default=0)
-    device_time_date            = models.DateTimeField(("contract end date"), default=datetime.date.today)
+    device_time_date            = models.DateTimeField(("contract end date"), auto_now_add=True)
     server_time                 = models.IntegerField(("GSM signal"), default=0)
     device                      = models.ForeignKey(Device, on_delete=models.CASCADE)
 
