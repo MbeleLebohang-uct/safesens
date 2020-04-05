@@ -1,11 +1,7 @@
 import graphene
-from graphene_django.types import DjangoObjectType
 from django.db.models import Q
 from .models import Device
-
-class DeviceType(DjangoObjectType):
-    class Meta:
-        model = Device
+from .types import DeviceType
 
 class DeviceQuery(graphene.ObjectType):
     device = graphene.Field(DeviceType, imei=graphene.String())

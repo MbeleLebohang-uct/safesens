@@ -81,7 +81,7 @@ class User(PermissionsMixin, AbstractBaseUser):
     user_type = models.IntegerField(choices=CustomerTypes.choices(), null=False, blank=False) 
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
-    home_device_imei = models.CharField("IMEI", max_length=50, default="")
+    home_device_imei = models.CharField("Home device imei", max_length=50, default="", blank=True)
 
     manager = models.ForeignKey('self', null=True, related_name='user', on_delete=models.CASCADE)
 
