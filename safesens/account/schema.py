@@ -2,6 +2,7 @@ import graphene
 import django_filters
 import graphql_jwt
 from graphql import GraphQLError
+from django.db.models import Q
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
@@ -17,6 +18,13 @@ class UserNode(DjangoObjectType):
         exclude = ("password",)
         interfaces = (graphene.relay.Node, )
 
+
+class UserFilter(django_filters.FilterSet):
+    class Meta:
+        model = User
+        fields = ['email']
+
+
 class Register(Output, graphene.relay.ClientIDMutation):
     user = graphene.Field(UserNode)
 
@@ -29,6 +37,7 @@ class Register(Output, graphene.relay.ClientIDMutation):
     def mutate_and_get_payload(cls, root, info, **input):
         current_user = info.context.user or None
         user_type = input.get('user_type')
+
         if not current_user.is_authenticated:
             return cls(success=False, errors=Messages.NOT_AUTHENICATED)
 
@@ -55,7 +64,18 @@ class Register(Output, graphene.relay.ClientIDMutation):
         return Register(user=user)
 
 class AccountQuery(graphene.ObjectType):
-    pass
+    own_users = DjangoFilterConnectionField(UserNode, filterset_class=UserFilter)
+
+    def resolve_own_users(self, info, **kwargs):
+        current_user = info.context.user
+
+        if not current_user.is_authenticated:
+            raise GraphQLError("Permision Denied: User not authenticated.")
+
+        return User.objects.filter(Q(manager=current_user))
+
+        
+
 
 class AccountMutation(graphene.ObjectType):
     register = Register.Field()
