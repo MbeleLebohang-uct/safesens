@@ -23,8 +23,6 @@ def get_value_from_env(name, default_value):
         return os.environ[name]
     return default_value
 
-
-
 DEBUG = get_bool_from_env("DEBUG", True)
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -37,7 +35,6 @@ ALLOWED_HOSTS = get_list(
     os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, upsitec.club, www.upsitec.club")
 )
 
-# Application definition
 INSTALLED_APPS = [
     # Default apps
     'django.contrib.admin',
@@ -87,9 +84,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'safesens.wsgi.application'
 
+GRAPHQL_JWT = {"JWT_PAYLOAD_HANDLER": "safesens.account.utils.create_jwt_payload"}
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+GRAPHENE = {
+    "RELAY_CONNECTION_ENFORCE_FIRST_OR_LAST": True,
+    "RELAY_CONNECTION_MAX_LIMIT": 100,
+    'SCHEMA': 'kovco.api.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
 
 DATABASES = {
     'default': {
@@ -106,9 +115,6 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "account.User"
-
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {

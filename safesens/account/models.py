@@ -28,6 +28,8 @@ class UserManager(BaseUserManager):
         )
         if password:
             user.set_password(password)
+        else:
+            raise Exception("Error: User password is required.")
 
         user.save()
 
@@ -35,9 +37,9 @@ class UserManager(BaseUserManager):
 
         if user_type == CustomerTypes.STAFF:
             permissions = [Permission.objects.get(codename='manage_users')]
-        elif user_type == CustomerTypes.CONTRUCTOR:
+        elif user_type == CustomerTypes.CONTRACTOR:
             permissions = [Permission.objects.get(codename='is_contractor')]
-        elif user_type == CustomerTypes.CONTRUCTOR_CUSTOMER:
+        elif user_type == CustomerTypes.CONTRACTOR_CUSTOMER:
             permissions = [Permission.objects.get(codename='is_contractor_customer')]
         elif user_type == CustomerTypes.TECHNICIAN:
             permissions = [Permission.objects.get(codename='is_technician')]
