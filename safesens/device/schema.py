@@ -18,5 +18,11 @@ class DeviceNode(DjangoObjectType):
         interfaces = (graphene.relay.Node, )
 
 class DeviceQuery(graphene.ObjectType):
-    device = graphene.relay.Node.Field(DeviceNode)
-    all_devices = DjangoFilterConnectionField(DeviceNode, filterset_class=DeviceFilter)
+    user_devices = DjangoFilterConnectionField(DeviceNode, filterset_class=DeviceFilter)
+
+    def resolve_user_devices(self, info, **kwargs):
+        current_user = info.context.user
+        if current_user.is_authenticated:
+            return current_user.device_set.all()
+            
+    ##mutation to modify device fields
