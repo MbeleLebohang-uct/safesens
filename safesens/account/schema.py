@@ -65,10 +65,18 @@ class Register(Output, graphene.relay.ClientIDMutation):
 
 class AccountQuery(graphene.ObjectType):
     own_users = DjangoFilterConnectionField(UserNode, filterset_class=UserFilter)
+    get_technicians = DjangoFilterConnectionField(UserNode, filterset_class=UserFilter)
+    ###get all the users that are technicians
+    #so get me users where i am the manager
+
+    def resolve_get_technicians(self, info, **kwargs):
+        current_user = info.context.user
+        if current_user.is_authenticated:
+            return User.objects.filter(Q(manager=current_user) and Q(user_type=CustomerTypes.TECHNICIAN))
+
 
     def resolve_own_users(self, info, **kwargs):
         current_user = info.context.user
-
         if not current_user.is_authenticated:
             raise GraphQLError("Permision Denied: User not authenticated.")
 
