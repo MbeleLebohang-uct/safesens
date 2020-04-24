@@ -2,6 +2,7 @@ import graphene
 import django_filters
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphql import GraphQLError
 
 from ..account.models import User
 from .models import Device
