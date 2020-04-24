@@ -70,10 +70,9 @@ class AccountQuery(graphene.ObjectType):
     def resolve_get_technicians(self, info, **kwargs):
         current_user = info.context.user
         if not current_user.is_authenticated:
-             raise GraphQLError("Permision Denied: User not authenticated.")
+            raise GraphQLError("Permision Denied: User not authenticated.")
             
         return User.objects.filter(Q(manager=current_user) and Q(user_type=CustomerTypes.TECHNICIAN))
-
 
     def resolve_own_users(self, info, **kwargs):
         current_user = info.context.user
@@ -81,8 +80,6 @@ class AccountQuery(graphene.ObjectType):
             raise GraphQLError("Permision Denied: User not authenticated.")
 
         return User.objects.filter(Q(manager=current_user))
-
-        
 
 
 class AccountMutation(graphene.ObjectType):

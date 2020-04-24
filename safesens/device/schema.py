@@ -22,7 +22,8 @@ class DeviceQuery(graphene.ObjectType):
 
     def resolve_user_devices(self, info, **kwargs):
         current_user = info.context.user
-        if current_user.is_authenticated:
-            return current_user.device_set.all()
+        if not current_user.is_authenticated:
+            raise GraphQLError("Permision Denied: User not authenticated.")
+
+        return current_user.device_set.all()
             
-    ##mutation to modify device fields
