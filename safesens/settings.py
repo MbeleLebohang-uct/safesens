@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'graphene_django',
     
     # Custom apps
+    'safesens.core', 
     'safesens.pages', 
     'safesens.event',  
     'safesens.device', 
@@ -94,7 +95,7 @@ AUTHENTICATION_BACKENDS = [
 GRAPHENE = {
     "RELAY_CONNECTION_ENFORCE_FIRST_OR_LAST": True,
     "RELAY_CONNECTION_MAX_LIMIT": 100,
-    'SCHEMA': 'kovco.api.schema.schema',
+    'SCHEMA': 'safesens.schema.schema',
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
