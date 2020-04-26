@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'safesens.event',  
     'safesens.device', 
     'safesens.account',
+    'safesens.core',
 ]
 
 MIDDLEWARE = [

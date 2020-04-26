@@ -2,6 +2,9 @@ import datetime
 from django.db import models
 from safesens.account.models import User
 
+from ..core.permissions import DevicePermissions
+from ..core.models import Address
+
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 class Device(models.Model):
@@ -9,9 +12,9 @@ class Device(models.Model):
     contract_end_date           = models.DateField(("contract end date"), default=datetime.date.today)
     sim_phone_number            = models.CharField(("sim card phone number"), max_length=15, default="")
     unit_name                   = models.CharField(("unit name"), max_length=100, default="")
-    unit_location               = models.TextField(("unit location"), default="")
     unit_admin_name             = models.CharField("unit admin name", max_length=50, default="")
     unit_admin_phone_number     = models.CharField("unit admin phone number", max_length=50, default="")
+    unit_location               = models.OneToOneField(Address, related_name="unit_location", on_delete=models.CASCADE, blank=True, null=True)
     
     ch1_on                      = models.BooleanField(("channel1 on"), default=False)
     ch2_on                      = models.BooleanField(("channel2 on"), default=False)
@@ -95,7 +98,7 @@ class Device(models.Model):
         ordering = ("unit_name",)
         permissions = (
             (
-                "manage_devices",
+                DevicePermissions.MANAGE_DEVICES.codename,
                 pgettext_lazy("Permission description", "Manage devices."),
             ),
         )

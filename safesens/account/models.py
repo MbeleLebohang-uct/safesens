@@ -5,11 +5,14 @@ from django.contrib.auth.models import (
     Permission,
     PermissionsMixin,
 )
-
-from django.utils import timezone
-from .utils import CustomerTypes
-
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
+from django.utils import timezone
+
+from versatileimagefield.fields import VersatileImageField
+
+from .utils import CustomerTypes
+from ..core.permissions import AccountPermissions
+from ..core.models import Address, ModelWithMetadata
 
 
 class UserManager(BaseUserManager):
@@ -36,16 +39,13 @@ class UserManager(BaseUserManager):
         permissions = []
 
         if user_type == CustomerTypes.STAFF:
-            permissions = [Permission.objects.get(codename='manage_users')]
+            permissions = [Permission.objects.get(codename=AccountPermissions.MANAGE_STAFF.codename)]
         elif user_type == CustomerTypes.CONTRACTOR:
-            permissions = [Permission.objects.get(codename='is_contractor')]
+            permissions = [Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR.codename)]
         elif user_type == CustomerTypes.CONTRACTOR_CUSTOMER:
-            permissions = [Permission.objects.get(codename='is_contractor_customer')]
+            permissions = [Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR_CUSTOMER.codename)]
         elif user_type == CustomerTypes.TECHNICIAN:
-            permissions = [Permission.objects.get(codename='is_technician')]
-
-        if is_superuser:
-            permissions.append(Permission.objects.get(codename='manage_staff'))
+            permissions = [Permission.objects.get(codename=AccountPermissions.IS_TECHNICIAN.codename)]
 
         permissions.append(Permission.objects.get(codename='manage_devices'))
 
@@ -76,7 +76,7 @@ class UserManager(BaseUserManager):
         return self.get_queryset().filter(user_type=is_staff)
 
 
-class User(PermissionsMixin, AbstractBaseUser):
+class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=256, blank=True)
     last_name = models.CharField(max_length=256, blank=True)
@@ -84,6 +84,10 @@ class User(PermissionsMixin, AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
     home_device_imei = models.CharField("Home device imei", max_length=50, default="", blank=True)
+    avatar = VersatileImageField(upload_to="user-avatars", blank=True, null=True)
+    address = models.OneToOneField(
+        Address, related_name="address", on_delete=models.CASCADE, blank=True, null=True
+    )
 
     manager = models.ForeignKey('self', null=True, related_name='user', on_delete=models.CASCADE)
 
@@ -94,25 +98,22 @@ class User(PermissionsMixin, AbstractBaseUser):
     class Meta:
         permissions = (
             (
-                "manage_users",
-                pgettext_lazy("Permission description", "Manage customers."),
-            ),
-            (
-                "manage_staff", 
+                AccountPermissions.MANAGE_STAFF.codename, 
                 pgettext_lazy("Permission description", "Manage staff.")),
             (
-                "is_technician",
+                AccountPermissions.IS_TECHNICIAN.codename,
                 pgettext_lazy("Permission description", "Is a technician responsible for device maintainance."),
             ),
             (
-                "is_contractor",
+                AccountPermissions.IS_CONTRACTOR.codename,
                 pgettext_lazy("Permission description", "Is a contructor who is a direct customer of KovcoLab."),
             ),
             (
-                "is_contractor_customer",
+                AccountPermissions.IS_CONTRACTOR_CUSTOMER.codename,
                 pgettext_lazy("Permission description", "Is a customer of KovcoLab contructor who actually owns the device."),
             ),
         )
+
 
     def get_full_name(self):
         if self.first_name or self.last_name:

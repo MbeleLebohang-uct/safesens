@@ -11,6 +11,10 @@ from .utils import CustomerTypes
 from .constants import Messages
 from .bases import Output
 
+from .mutations.account import (
+    AccountRegister
+)
+
 
 class UserNode(DjangoObjectType):
     class Meta:
@@ -84,6 +88,7 @@ class AccountQuery(graphene.ObjectType):
 
 class AccountMutation(graphene.ObjectType):
     register = Register.Field()
+    account_register = AccountRegister.Field()
 
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_auth = graphql_jwt.Verify.Field()
