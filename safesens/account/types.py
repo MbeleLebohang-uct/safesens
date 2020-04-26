@@ -53,7 +53,7 @@ class ExpectedErrorType(graphene.Scalar):
 
 @key("id")
 @key("email")
-class User(CountableDjangoObjectType):
+class UserNode(CountableDjangoObjectType):
     permissions = graphene.List(
         PermissionDisplay, description="List of user's permissions."
     )
@@ -73,6 +73,12 @@ class User(CountableDjangoObjectType):
             "is_staff",
             "last_login",
             "last_name",
+            "role",
+            "home_device_imei",
+            "address",
+            "manager",
+            "devices",
+            "avatar",
         ]
 
 

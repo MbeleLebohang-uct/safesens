@@ -13,10 +13,11 @@ from itertools import chain
 
 from graphql.error import GraphQLError
 
-from .types import Error
+from .types import Error, Upload
 from .utils import from_global_id_strict_type, snake_to_camel_case
 from .utils.error_codes import get_error_code_from_error
  
+
 registry = get_global_registry()
  
 def get_model_name(model):
@@ -84,13 +85,9 @@ class BaseMutation(graphene.Mutation):
     errors = graphene.List(
         graphene.NonNull(Error),
         description="List of errors that occurred executing the mutation.",
-        deprecation_reason=(
-            "Use typed errors with error codes. This field will be removed after "
-            "2020-07-31."
-        ),
         required=True,
     )
-
+    
     class Meta:
         abstract = True
 

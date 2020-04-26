@@ -88,7 +88,7 @@ class Device(models.Model):
     heartbeat_monitor_state      = models.BooleanField(("heartbeat monitor state"), default=False)
     allowable_offline_minutes    = models.IntegerField(("allowable offline minutes"), default=0)
 
-    users                        = models.ManyToManyField(User)
+    users                        = models.ManyToManyField(User, related_name="devices")
 
     def __str__(self):
         return self.imei

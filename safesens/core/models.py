@@ -3,9 +3,6 @@ from django.db import models
 from typing import Any
 
 from django_countries.fields import CountryField
-from django.contrib.postgres.fields import JSONField
-
-from .utils.json_serializer import CustomJsonEncoder
 
 class Address(models.Model):
     street_address_1 = models.CharField(max_length=256, blank=True)
@@ -46,10 +43,8 @@ class Address(models.Model):
 
 
 class ModelWithMetadata(models.Model):
-    private_metadata = JSONField(
-        blank=True, null=True, default=dict, encoder=CustomJsonEncoder
-    )
-    metadata = JSONField(blank=True, null=True, default=dict, encoder=CustomJsonEncoder)
+    private_metadata = models.TextField(blank=True, null=True, default=dict)
+    metadata = models.TextField(blank=True, null=True, default=dict)
 
     class Meta:
         abstract = True

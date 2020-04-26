@@ -59,10 +59,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'safesens.urls'
@@ -85,7 +83,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'safesens.wsgi.application'
 
+# Django GraphQL JWT settings
 GRAPHQL_JWT = {"JWT_PAYLOAD_HANDLER": "safesens.account.utils.create_jwt_payload"}
+if not DEBUG:
+    GRAPHQL_JWT["JWT_VERIFY_EXPIRATION"] = True
+
 
 AUTHENTICATION_BACKENDS = [
     "graphql_jwt.backends.JSONWebTokenBackend",
@@ -95,11 +97,12 @@ AUTHENTICATION_BACKENDS = [
 GRAPHENE = {
     "RELAY_CONNECTION_ENFORCE_FIRST_OR_LAST": True,
     "RELAY_CONNECTION_MAX_LIMIT": 100,
-    'SCHEMA': 'kovco.api.schema.schema',
+    'SCHEMA': 'safesens.schema.schema',
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
+        # "safesens.middleware.JWTMiddleware",
 
 DATABASES = {
     'default': {
@@ -110,10 +113,15 @@ DATABASES = {
         'HOST': get_value_from_env("DBHOST", 'n3plcpnl0283.prod.ams3.secureserver.net'),
         'PORT': get_value_from_env("DBPORT", '3306'),
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+            'init_command': 'SET innodb_strict_mode=1',
+            'charset': 'utf8mb4',
         }
     }
 }
+
+ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL = get_bool_from_env(
+    "ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL", False
+)
 
 AUTH_USER_MODEL = "account.User"
 

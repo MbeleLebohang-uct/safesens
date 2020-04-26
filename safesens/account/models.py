@@ -10,24 +10,25 @@ from django.utils import timezone
 
 from versatileimagefield.fields import VersatileImageField
 
-from .utils import CustomerTypes
 from ..core.permissions import AccountPermissions
 from ..core.models import Address, ModelWithMetadata
+
+from . import UserRole
 
 
 class UserManager(BaseUserManager):
     def create_user(
-        self, email, password=None, user_type=None, is_superuser=False, is_active=True, **extra_fields
+        self, email, password=None, role=None, is_superuser=False, is_active=True, **extra_fields
     ):
         """Create a user instance with the given email and password."""
         email = UserManager.normalize_email(email)
         extra_fields.pop("username", None)
-
-        if not user_type:
+        print("-----------------------1--------------------------")
+        if not role:
             raise Exception("Error: User type is required.")
 
         user = self.model(
-            email=email, is_active=is_active, user_type=user_type, is_superuser=is_superuser, **extra_fields
+            email=email, is_active=is_active, role=role, is_superuser=is_superuser, **extra_fields
         )
         if password:
             user.set_password(password)
@@ -38,13 +39,13 @@ class UserManager(BaseUserManager):
 
         permissions = []
 
-        if user_type == CustomerTypes.STAFF:
+        if role == UserRole.KOVCO_STAFF:
             permissions = [Permission.objects.get(codename=AccountPermissions.MANAGE_STAFF.codename)]
-        elif user_type == CustomerTypes.CONTRACTOR:
+        elif role == UserRole.CONTRACTOR:
             permissions = [Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR.codename)]
-        elif user_type == CustomerTypes.CONTRACTOR_CUSTOMER:
+        elif role == UserRole.CONTRACTOR_CUSTOMER:
             permissions = [Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR_CUSTOMER.codename)]
-        elif user_type == CustomerTypes.TECHNICIAN:
+        elif role == UserRole.TECHNICIAN:
             permissions = [Permission.objects.get(codename=AccountPermissions.IS_TECHNICIAN.codename)]
 
         permissions.append(Permission.objects.get(codename='manage_devices'))
@@ -56,34 +57,38 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         return self.create_user(
-            email, password, user_type=CustomerTypes.STAFF, is_superuser=True, **extra_fields
+            email, password, role=UserRole.KOVCO_STAFF, is_superuser=True, **extra_fields
         )
 
     def contractor_customers(self):
-        is_contractor_customer = CustomerTypes.CONTRACTOR_CUSTOMER
-        return self.get_queryset().filter(user_type=is_contractor_customer)
+        is_contractor_customer = UserRole.CONTRACTOR_CUSTOMER
+        return self.get_queryset().filter(role=is_contractor_customer)
 
     def contractors(self):
-        is_contractor = CustomerTypes.CONTRACTOR
-        return self.get_queryset().filter(user_type=is_contractor)
+        is_contractor = UserRole.CONTRACTOR
+        return self.get_queryset().filter(role=is_contractor)
 
     def technicians(self):
-        is_technician = CustomerTypes.TECHNICIAN
-        return self.get_queryset().filter(user_type=is_technician)
+        is_technician = UserRole.TECHNICIAN
+        return self.get_queryset().filter(role=is_technician)
 
     def staff(self):
-        is_staff = CustomerTypes.STAFF
-        return self.get_queryset().filter(user_type=is_staff)
+        is_staff = UserRole.KOVCO_STAFF
+        return self.get_queryset().filter(role=is_staff)
 
 
 class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=256, blank=True)
     last_name = models.CharField(max_length=256, blank=True)
-    user_type = models.IntegerField(choices=CustomerTypes.choices(), null=False, blank=False) 
+
+    role = models.CharField(max_length=20, choices=UserRole.CHOICES, null=False, blank=False)
+
+    home_device_imei = models.CharField("Home device imei", max_length=50, default="", blank=True)
+    
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
-    home_device_imei = models.CharField("Home device imei", max_length=50, default="", blank=True)
+    
     avatar = VersatileImageField(upload_to="user-avatars", blank=True, null=True)
     address = models.OneToOneField(
         Address, related_name="address", on_delete=models.CASCADE, blank=True, null=True
@@ -124,16 +129,16 @@ class User(PermissionsMixin, ModelWithMetadata, AbstractBaseUser):
         return self.email
 
     def is_staff(self):
-        return self.user_type == CustomerTypes.STAFF
+        return self.role == UserRole.KOVCO_STAFF
 
     def is_technician(self):
-        return self.user_type == CustomerTypes.TECHNICIAN
+        return self.role == UserRole.TECHNICIAN
 
     def is_contractor(self):
-        return self.user_type == CustomerTypes.CONTRACTOR
+        return self.role == UserRole.CONTRACTOR
 
     def is_contractor_customer(self):
-        return self.user_type == CustomerTypes.CONTRACTOR_CUSTOMER
+        return self.role == UserRole.CONTRACTOR_CUSTOMER
 
     def __str__(self):
         return self.email
