@@ -37,6 +37,10 @@ ALLOWED_HOSTS = get_list(
     os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, upsitec.club, www.upsitec.club")
 )
 
+ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL = get_bool_from_env(
+    "ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL", False
+)
+
 INSTALLED_APPS = [
     # Default apps
     'django.contrib.admin',
