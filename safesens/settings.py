@@ -5,6 +5,8 @@ Django settings for safesens project.
 import os
 import ast
 
+from django.utils.timezone import timedelta
+
 def get_list(text):
     return [item.strip() for item in text.split(",")]
 
@@ -85,7 +87,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'safesens.wsgi.application'
 
-GRAPHQL_JWT = {"JWT_PAYLOAD_HANDLER": "safesens.account.utils.create_jwt_payload"}
+GRAPHQL_JWT = {
+    "JWT_PAYLOAD_HANDLER": "safesens.account.utils.create_jwt_payload",
+}
 
 AUTHENTICATION_BACKENDS = [
     "graphql_jwt.backends.JSONWebTokenBackend",

@@ -22,3 +22,4 @@ class AccountErrorCode(Enum):
     PASSWORD_TOO_SIMILAR = "password_too_similar"
     REQUIRED = "required"
     UNIQUE = "unique"
+    TOKEN_ERROR = "token_error"

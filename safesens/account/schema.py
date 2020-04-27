@@ -10,7 +10,7 @@ from .models import User
 from .utils import CustomerTypes
 from .constants import Messages
 from .bases import Output
-from .mutations.account import CreateToken
+from .mutations.account import CreateToken, VerifyToken
 
 
 class UserNode(DjangoObjectType):
@@ -86,9 +86,6 @@ class AccountQuery(graphene.ObjectType):
 class AccountMutation(graphene.ObjectType):
     register = Register.Field()
 
-    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
-    verify_auth = graphql_jwt.Verify.Field()
-    refresh_auth = graphql_jwt.Refresh.Field()
-
     token_create = CreateToken.Field()
+    token_verify = VerifyToken.Field()
     token_refresh = graphql_jwt.Refresh.Field()

@@ -1,6 +1,9 @@
 import graphene
 
+from django.contrib.auth import get_user_model
+
 from graphql_jwt import ObtainJSONWebToken, Verify
+from graphql_jwt import relay
 from graphql_jwt.exceptions import JSONWebTokenError, PermissionDenied
 
 from django.core.exceptions import (
@@ -15,7 +18,7 @@ from ...core.types.common import AccountError
 from ..models import User
 from ..types import UserType
 
-class CreateToken(ObtainJSONWebToken):
+class CreateToken(relay.JSONWebTokenMutation):
     """Mutation that authenticates a user and returns token and user data.
 
     It overrides the default graphql_jwt.ObtainJSONWebToken to wrap potential
@@ -62,3 +65,27 @@ class CreateToken(ObtainJSONWebToken):
     def resolve(cls, root, info, **kwargs):
         return cls(user=info.context.user, account_errors=[])
 
+class VerifyToken(Verify):
+    """Mutation that confirms if token is valid and also returns user data."""
+
+    account_errors = graphene.List(
+        graphene.NonNull(AccountError),
+        description="List of errors that occurred executing the mutation.",
+        required=True,
+    )
+
+    user = graphene.Field(UserType)
+
+    def resolve_user(self, _info, **_kwargs):
+        username_field = get_user_model().USERNAME_FIELD
+        kwargs = {username_field: self.payload.get(username_field)}
+        return User.objects.get(**kwargs)
+
+    @classmethod
+    def mutate(cls, root, info, token, **kwargs):
+        try:
+            return super().mutate(root, info, token, **kwargs)
+        except JSONWebTokenError as e:
+            print(str(e))
+            
+            return None
