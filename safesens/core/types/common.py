@@ -5,6 +5,8 @@ from ..enums import (
     PermissionEnum,
 )
 
+from ..templatetags.images import get_thumbnail
+
 class Error(graphene.ObjectType):
     field = graphene.String(
         description=(
@@ -29,3 +31,25 @@ class PermissionDisplay(graphene.ObjectType):
 
     class Meta:
         description = "Represents a permission object in a friendly form."
+
+class Image(graphene.ObjectType):
+    url = graphene.String(required=True, description="The URL of the image.")
+    alt = graphene.String(description="Alt text for an image.")
+
+    class Meta:
+        description = "Represents an image."
+
+    @staticmethod
+    def get_adjusted(image, alt, size, rendition_key_set, info):
+        """Return Image adjusted with given size."""
+        if size:
+            url = get_thumbnail(
+                image_file=image,
+                size=size,
+                method="thumbnail",
+                rendition_key_set=rendition_key_set,
+            )
+        else:
+            url = image.url
+        url = info.context.build_absolute_uri(url)
+        return Image(url, alt)

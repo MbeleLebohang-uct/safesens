@@ -6,7 +6,7 @@ from graphene_federation import key
 
 from .exceptions import WrongUsage
 
-from ..core.types import PermissionDisplay
+from ..core.types import PermissionDisplay, Image
 from ..core.connection import CountableDjangoObjectType
  
 from . import models
@@ -57,6 +57,7 @@ class UserType(CountableDjangoObjectType):
         PermissionDisplay, description="List of user's permissions."
     )
     is_staff = graphene.Boolean(description="Is the user a staff member or not.")
+    avatar = graphene.Field(Image, size=graphene.Int(description="Size of the avatar."))
 
     class Meta:
         description = "Represents user data."

@@ -17,12 +17,18 @@ from django.core.exceptions import (
 from ..error_codes import AccountErrorCode
 
 from ...core.mutations import validation_error_to_error_type, ModelMutation
+from ...core.permissions import AccountPermissions
 from ...core.types.common import AccountError
 from ...core.utils.url import validate_safesens_url
 
 from ..models import User
 from ..types import UserType
-from ..utils import CustomerTypes
+from ..enums import UserRoleEnum
+from ..emails import send_account_confirmation_email
+from ..bases import Output
+from ..utils import get_user_permissions
+from .. import UserRole
+
 
 
 
@@ -31,7 +37,12 @@ from ..utils import CustomerTypes
 class AccountRegisterInput(graphene.InputObjectType):
     email = graphene.String(description="The email address of the user.", required=True)
     password = graphene.String(description="Password.", required=True)
-    user_type = graphene.Enum.from_enum(CustomerTypes)(description="The role of the use to register.", required=True)
+    role = UserRoleEnum(
+        description=(
+            "User role: TECHNICIAN, CONTRACTOR CUSTOMER, CONTRACTOR or KOVCO STAFF."
+        ),
+        required=True,
+    )
     redirect_url = graphene.String(
         description=(
             "Base of safesens URL that will be needed to create confirmation URL."
@@ -39,7 +50,7 @@ class AccountRegisterInput(graphene.InputObjectType):
         required=False,
     )
 
-class AccountRegister(ModelMutation):
+class AccountRegister(Output, ModelMutation):
     class Arguments:
         input = AccountRegisterInput(
             description="Fields required to create a user.", required=True
@@ -55,6 +66,7 @@ class AccountRegister(ModelMutation):
         model = User
         error_type_class = AccountError
         error_type_field = "account_errors"
+        permissions = (AccountPermissions.MANAGE_STAFF, AccountPermissions.IS_CONTRACTOR, AccountPermissions.IS_CONTRACTOR_CUSTOMER,)
 
     @classmethod
     @login_required
@@ -76,6 +88,7 @@ class AccountRegister(ModelMutation):
             return super().clean_input(info, instance, data, input_cls=None)
         elif not data.get("redirect_url"):
             # TODO: Learn about django email verification
+            print("-----------------------err1")
             raise ValidationError(
                 {
                     "redirect_url": ValidationError(
@@ -98,15 +111,40 @@ class AccountRegister(ModelMutation):
         return super().clean_input(info, instance, data, input_cls=None)
 
     @classmethod
+    def _check_current_user_permissions(cls, info, user, role):
+        current_user = info.context.user
+        if current_user.is_contractor() and role!=UserRole.CONTRACTOR_CUSTOMER:
+            return cls(success=False, errors=Messages.CONTRACTOR_UNAUTHORISED)
+
+        if current_user.is_contractor_customer() and role!=UserRole.TECHNICIAN:
+            return cls(success=False, errors=Messages.CUSTOMER_UNAUTHORISED)
+
+        if (current_user.is_staff() or current_user.is_superuser) and role!=UserRole.CONTRACTOR and role!=UserRole.KOVCO_STAFF:
+            return cls(success=False, errors=Messages.STAFF_UNAUTHORISED)
+
+        return cls(success=True, errors=None)
+
+        
+    @classmethod
     def save(cls, info, user, cleaned_input):
         password = cleaned_input["password"]
         user.set_password(password)
+
+        results = cls._check_current_user_permissions(info, user, user.role)
+
+        if results.success == False:
+            return results
+
         if settings.ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL:
             user.is_active = False
             user.save()
-            emails.send_account_confirmation_email(user, cleaned_input["redirect_url"])
+            send_account_confirmation_email(user, cleaned_input["redirect_url"])
         else:
             user.save()
+
+        permissions = get_user_permissions(user.role)
+        for permission in permissions:
+            user.user_permissions.add(permission)
         
 
     @classmethod

@@ -2,8 +2,21 @@ import graphene
 
 from graphene import ObjectType
 
-from typing import Union 
+from typing import Optional, Union 
+from urllib.parse import urljoin
+from django.utils.encoding import iri_to_uri
 from django.core.exceptions import ValidationError
+from django.contrib.sites.models import Site
+from django.conf import settings
+
+
+def build_absolute_uri(location: str) -> Optional[str]:
+    host = Site.objects.get_current().domain
+    protocol = "https" if settings.ENABLE_SSL else "http"
+    current_uri = "%s://%s" % (protocol, host)
+    location = urljoin(current_uri, location)
+    return iri_to_uri(location)
+
 
 def from_global_id_strict_type (
     global_id: str, only_type: Union[ObjectType, str], field: str = "id"

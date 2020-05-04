@@ -4,6 +4,7 @@ Django settings for safesens project.
 
 import os
 import ast
+import warnings
 
 from django.utils.timezone import timedelta
 
@@ -27,6 +28,8 @@ def get_value_from_env(name, default_value):
 
 DEBUG = get_bool_from_env("DEBUG", True)
 
+SITE_ID = 1
+
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 PUBLIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../public_html"))
@@ -37,21 +40,50 @@ ALLOWED_HOSTS = get_list(
     os.environ.get("ALLOWED_HOSTS", "localhost, 127.0.0.1, upsitec.club, www.upsitec.club")
 )
 
+_DEFAULT_CLIENT_HOSTS = "localhost,127.0.0.1"
+
+ALLOWED_CLIENT_HOSTS = os.environ.get("ALLOWED_CLIENT_HOSTS")
+if not ALLOWED_CLIENT_HOSTS:
+    if DEBUG:
+        ALLOWED_CLIENT_HOSTS = _DEFAULT_CLIENT_HOSTS
+    else:
+        raise ImproperlyConfigured(
+            "ALLOWED_CLIENT_HOSTS environment variable must be set when DEBUG=False."
+        )
+
+ALLOWED_CLIENT_HOSTS = get_list(ALLOWED_CLIENT_HOSTS)
+
 ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL = get_bool_from_env(
     "ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL", False
 )
+
+EMAIL_HOST_USER = get_value_from_env("EMAIL_HOST_USER", '')
+EMAIL_HOST_PASSWORD = get_value_from_env("EMAIL_HOST_PASSWORD", '')
+EMAIL_HOST = "smtp.office365.com"
+EMAIL_PORT = 587
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+
+ENABLE_SSL = get_bool_from_env("ENABLE_SSL", False)
+
+if ENABLE_SSL:
+    SECURE_SSL_REDIRECT = not DEBUG
 
 INSTALLED_APPS = [
     # Default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    "django.contrib.sites",
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
     # Third part apps
     'graphene_django',
+    'versatileimagefield',
     
     # Custom apps
     'safesens.core', 
@@ -76,7 +108,7 @@ ROOT_URLCONF = 'safesens.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(PROJECT_ROOT, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,6 +122,34 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'safesens.wsgi.application'
+
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    "products": [
+        ("product_gallery", "thumbnail__540x540"),
+        ("product_gallery_2x", "thumbnail__1080x1080"),
+        ("product_small", "thumbnail__60x60"),
+        ("product_small_2x", "thumbnail__120x120"),
+        ("product_list", "thumbnail__255x255"),
+        ("product_list_2x", "thumbnail__510x510"),
+    ],
+    "background_images": [("header_image", "thumbnail__1080x440")],
+    "user_avatars": [("default", "thumbnail__445x445")],
+}
+
+VERSATILEIMAGEFIELD_SETTINGS = {
+    # Images should be pre-generated on Production environment
+    "create_images_on_demand": get_bool_from_env("CREATE_IMAGES_ON_DEMAND", DEBUG)
+}
+
+PLACEHOLDER_IMAGES = {
+    60: "images/placeholder60x60.png",
+    120: "images/placeholder120x120.png",
+    255: "images/placeholder255x255.png",
+    540: "images/placeholder540x540.png",
+    1080: "images/placeholder1080x1080.png",
+}
+
+DEFAULT_PLACEHOLDER = "images/placeholder255x255.png"
 
 GRAPHQL_JWT = {
     "JWT_PAYLOAD_HANDLER": "safesens.account.utils.create_jwt_payload",
