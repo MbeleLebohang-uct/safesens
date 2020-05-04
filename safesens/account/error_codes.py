@@ -23,3 +23,7 @@ class AccountErrorCode(Enum):
     REQUIRED = "required"
     UNIQUE = "unique"
     TOKEN_ERROR = "token_error"
+    CONTRACTOR_UNAUTHORISED = "contractor_not_unauthorised"
+    CUSTOMER_UNAUTHORISED = "customer_not_unauthorised"
+    STAFF_UNAUTHORISED = "staff_not_unauthorised"
+    NOT_AUTHENTICATED = "user_not_authenticated"

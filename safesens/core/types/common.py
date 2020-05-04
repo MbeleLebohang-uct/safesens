@@ -6,6 +6,9 @@ from ..enums import (
 )
 
 from ..templatetags.images import get_thumbnail
+from graphene_django.utils import camelize
+from .exceptions import WrongUsage
+
 
 class Error(graphene.ObjectType):
     field = graphene.String(
@@ -19,6 +22,16 @@ class Error(graphene.ObjectType):
 
     class Meta:
         description = "Represents an error in the input of a mutation."
+
+    @staticmethod
+    def serialize(errors):
+        if isinstance(errors, dict):
+            if errors.get("__all__", False):
+                errors["non_field_errors"] = errors.pop("__all__")
+            return camelize(errors)
+        elif isinstance(errors, list):
+            return {"nonFieldErrors": errors}
+        raise WrongUsage("`errors` must be list or dict!")
 
 class AccountError(Error):
     code = AccountErrorCode(description="The error code.", required=True)

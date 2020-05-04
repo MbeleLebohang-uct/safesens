@@ -7,13 +7,14 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import User
-# from .utils import CustomerTypes
 from .constants import Messages
-from .bases import Output
 from .mutations.account import (
     CreateToken, 
     VerifyToken, 
     AccountRegister
+)
+from .mutations.base import (
+    ConfirmAccount
 )
 
 
@@ -90,7 +91,9 @@ class AccountQuery(graphene.ObjectType):
 class AccountMutation(graphene.ObjectType):
     # register = Register.Field()
     account_register = AccountRegister.Field()
+    account_confirm = ConfirmAccount.Field()
 
     token_create = CreateToken.Field()
     token_verify = VerifyToken.Field()
     token_refresh = graphql_jwt.Refresh.Field()
+     

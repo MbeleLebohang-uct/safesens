@@ -1,54 +1,13 @@
 import graphene
 from graphene import relay
-from graphene_django.utils import camelize
 from django.contrib.auth import get_user_model
 from graphene_federation import key
-
-from .exceptions import WrongUsage
 
 from ..core.types import PermissionDisplay, Image
 from ..core.connection import CountableDjangoObjectType
  
 from . import models
 
-
-class ExpectedErrorType(graphene.Scalar):
-    class Meta:
-        description = """
-    Errors messages and codes mapped to
-    fields or non fields errors.
-    Example:
-    {
-        field_name: [
-            {
-                "message": "error message",
-                "code": "error_code"
-            }
-        ],
-        other_field: [
-            {
-                "message": "error message",
-                "code": "error_code"
-            }
-        ],
-        nonFieldErrors: [
-            {
-                "message": "error message",
-                "code": "error_code"
-            }
-        ]
-    }
-    """
-
-    @staticmethod
-    def serialize(errors):
-        if isinstance(errors, dict):
-            if errors.get("__all__", False):
-                errors["non_field_errors"] = errors.pop("__all__")
-            return camelize(errors)
-        elif isinstance(errors, list):
-            return {"nonFieldErrors": errors}
-        raise WrongUsage("`errors` must be list or dict!")
 
 @key("id")
 @key("email")
@@ -63,22 +22,6 @@ class UserType(CountableDjangoObjectType):
         description = "Represents user data."
         interfaces = [relay.Node, ]
         model = get_user_model()
-        # only_fields = [
-        #     "date_joined",
-        #     "email",
-        #     "first_name",
-        #     "id",
-        #     "is_active",
-        #     "is_staff",
-        #     "last_login",
-        #     "last_name",
-        #     "role",
-        #     "home_device_imei",
-        #     "address",
-        #     "manager",
-        #     "devices",
-        #     "avatar",
-        # ]
 
 
     @staticmethod

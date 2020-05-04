@@ -19,21 +19,22 @@ from ..error_codes import AccountErrorCode
 from ...core.mutations import validation_error_to_error_type, ModelMutation
 from ...core.permissions import AccountPermissions
 from ...core.types.common import AccountError
+from ...core.types.exceptions import (
+    InvalidPassword, 
+    GraphQLAuthError, 
+    InvalidRedirectUrl
+)
+from ...core.types import Output
 from ...core.utils.url import validate_safesens_url
 
 from ..models import User
 from ..types import UserType
 from ..enums import UserRoleEnum
 from ..emails import send_account_confirmation_email
-from ..bases import Output
 from ..utils import get_user_permissions
 from .. import UserRole
 
 
-
-
-
-#---------------------------------------------------------------------------------
 class AccountRegisterInput(graphene.InputObjectType):
     email = graphene.String(description="The email address of the user.", required=True)
     password = graphene.String(description="Password.", required=True)
@@ -73,6 +74,7 @@ class AccountRegister(Output, ModelMutation):
     def mutate(cls, root, info, **data):
         response = super().mutate(root, info, **data)
         response.requires_confirmation = settings.ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL
+        response.success = True
         return response
 
     @classmethod
@@ -81,32 +83,18 @@ class AccountRegister(Output, ModelMutation):
         try:
             password_validation.validate_password(password, instance)
         except ValidationError as error:
-            raise GraphQLError(error.messages[0])
+            raise InvalidPassword(error_field="password", errors=error)
 
             
         if not settings.ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL:
             return super().clean_input(info, instance, data, input_cls=None)
         elif not data.get("redirect_url"):
-            # TODO: Learn about django email verification
-            print("-----------------------err1")
-            raise ValidationError(
-                {
-                    "redirect_url": ValidationError(
-                        "This field is required.", code=AccountErrorCode.REQUIRED
-                    )
-                }
-            )
+            raise GraphQLAuthError(error_field="redirect_url", message="This field is required.")
 
         try:
             validate_safesens_url(data["redirect_url"])
         except ValidationError as error:
-            raise ValidationError(
-                {
-                    "redirect_url": ValidationError(
-                        error.message, code=AccountErrorCode.INVALID
-                    )
-                }
-            )
+            raise InvalidRedirectUrl(error_field="redirect_url", message="This field is invalid.", errors=error)
 
         return super().clean_input(info, instance, data, input_cls=None)
 
@@ -114,15 +102,15 @@ class AccountRegister(Output, ModelMutation):
     def _check_current_user_permissions(cls, info, user, role):
         current_user = info.context.user
         if current_user.is_contractor() and role!=UserRole.CONTRACTOR_CUSTOMER:
-            return cls(success=False, errors=Messages.CONTRACTOR_UNAUTHORISED)
+            return cls(success=False, account_errors=[AccountError(message="Contractor is only authorized to create its customer.", code=AccountErrorCode.CONTRACTOR_UNAUTHORISED)]) 
 
         if current_user.is_contractor_customer() and role!=UserRole.TECHNICIAN:
-            return cls(success=False, errors=Messages.CUSTOMER_UNAUTHORISED)
+            return cls(success=False, account_errors=[AccountError(message="A customer is only authorized to create its teachnician.", code=AccountErrorCode.CUSTOMER_UNAUTHORISED)])
 
         if (current_user.is_staff() or current_user.is_superuser) and role!=UserRole.CONTRACTOR and role!=UserRole.KOVCO_STAFF:
-            return cls(success=False, errors=Messages.STAFF_UNAUTHORISED)
+            return cls(success=False, account_errors=[AccountError(message="Staff is only authorized to create contractors.", code=AccountErrorCode.STAFF_UNAUTHORISED)])
 
-        return cls(success=True, errors=None)
+        return cls(success=True, account_errors=None)
 
         
     @classmethod
@@ -222,6 +210,5 @@ class VerifyToken(Verify):
         try:
             return super().mutate(root, info, token, **kwargs)
         except JSONWebTokenError as e:
-            print(str(e))
+            raise GraphQLAuthError(message="This field is required.", errors=e)
             
-            return None
