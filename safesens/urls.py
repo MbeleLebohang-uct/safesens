@@ -15,6 +15,7 @@ from .schema import schema
 
 urlpatterns = [
     path('', home_view, name='home'),
+    path('account/', include('safesens.account.urls')),
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True,schema=schema))),
     path('admin/', admin.site.urls),
 ]
@@ -22,5 +23,4 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT) + [
         url(r"^static/(?P<path>.*)$", serve),
-        url(r"^", RedirectView.as_view(url="/graphql/")),
     ]
