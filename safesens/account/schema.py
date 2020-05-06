@@ -1,18 +1,13 @@
 import graphene
-import django_filters
+
 import graphql_jwt
 from graphql import GraphQLError
-from django.db.models import Q
-from graphene_django import DjangoObjectType
-from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required
 
 from ..core.fields import FilterInputConnectionField
 from ..core.types import FilterInputObjectType
 
-from .models import User
 from .types import UserType
-from .constants import Messages
 from .mutations.account import (
     CreateToken, 
     VerifyToken, 
