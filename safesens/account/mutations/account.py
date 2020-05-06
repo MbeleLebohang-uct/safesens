@@ -140,7 +140,6 @@ class AccountRegister(Output, ModelMutation):
         instance.manager = info.context.user
         super().populate_required_fields(info, instance, data)
 
-#---------------------------------------------------------------------------------
 
 class CreateToken(relay.JSONWebTokenMutation):
     """Mutation that authenticates a user and returns token and user data.

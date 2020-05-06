@@ -7,6 +7,8 @@ from .common import (
 )
 
 from .upload import Upload
+from .filter_input import FilterInputObjectType
+from .sort_input import SortInputObjectType
 
 class Output(graphene.ObjectType):
     """

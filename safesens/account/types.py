@@ -22,6 +22,7 @@ class UserType(CountableDjangoObjectType):
         description = "Represents user data."
         interfaces = [relay.Node, ]
         model = get_user_model()
+        exclude = ("password",)
 
 
     @staticmethod

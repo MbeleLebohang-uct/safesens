@@ -6,3 +6,15 @@ from .permissions import get_permissions_enum_list
 PermissionEnum = graphene.Enum("PermissionEnum", get_permissions_enum_list())
 
 AccountErrorCode = graphene.Enum.from_enum(account_error_codes.AccountErrorCode)
+
+class OrderDirection(graphene.Enum):
+    ASC = ""
+    DESC = "-"
+
+    @property
+    def description(self):
+        if self == OrderDirection.ASC:
+            return "Specifies an ascending sort order."
+        if self == OrderDirection.DESC:
+            return "Specifies a descending sort order."
+        raise ValueError("Unsupported enum value: %s" % self.value)

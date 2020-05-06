@@ -11,7 +11,7 @@ def account_confirm_view(request):
     token = request.GET.get("token", None)
 
     if email == None or token == None:
-        return HttpResponse("<h1>Somethis went wrong. Contact the admin. Email or token could not be found.</h1>")
+        return HttpResponse("<h1>Something went wrong. Contact the admin. Email or token could not be found.</h1>")
 
     try:
         user = User.objects.get(email=email)

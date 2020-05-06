@@ -33,8 +33,10 @@ class Error(graphene.ObjectType):
             return {"nonFieldErrors": errors}
         raise WrongUsage("`errors` must be list or dict!")
 
+
 class AccountError(Error):
     code = AccountErrorCode(description="The error code.", required=True)
+
 
 class PermissionDisplay(graphene.ObjectType):
     code = PermissionEnum(description="Internal code for permission.", required=True)
@@ -44,6 +46,7 @@ class PermissionDisplay(graphene.ObjectType):
 
     class Meta:
         description = "Represents a permission object in a friendly form."
+
 
 class Image(graphene.ObjectType):
     url = graphene.String(required=True, description="The URL of the image.")
@@ -66,3 +69,7 @@ class Image(graphene.ObjectType):
             url = image.url
         url = info.context.build_absolute_uri(url)
         return Image(url, alt)
+
+class DateRangeInput(graphene.InputObjectType):
+    gte = graphene.Date(description="Start date.", required=False)
+    lte = graphene.Date(description="End date.", required=False)

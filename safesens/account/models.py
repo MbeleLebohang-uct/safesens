@@ -63,6 +63,19 @@ class UserManager(BaseUserManager):
             email, password, role=UserRole.KOVCO_STAFF, is_superuser=True, **extra_fields
         )
 
+    def contractor_customers(self):
+        return self.get_queryset().filter(role=UserRole.CONTRACTOR_CUSTOMER)
+
+    def contractors(self):
+        return self.get_queryset().filter(role=UserRole.CONTRACTOR)
+
+    def technicians(self):
+        return self.get_queryset().filter(role=UserRole.TECHNICIAN)
+
+    def staff(self):
+        return self.get_queryset().filter(role=UserRole.KOVCO_STAFF)
+
+
 class User(PermissionsMixin, AbstractBaseUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=256, blank=True)
