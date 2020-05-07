@@ -43,7 +43,7 @@ ALLOWED_HOSTS = get_list(
 
 _DEFAULT_CLIENT_HOSTS = "localhost,127.0.0.1"
 
-ALLOWED_CLIENT_HOSTS = os.environ.get("ALLOWED_CLIENT_HOSTS")
+ALLOWED_CLIENT_HOSTS = os.environ.get("ALLOWED_CLIENT_HOSTS", "upsitec.club, www.upsitec.club")
 if not ALLOWED_CLIENT_HOSTS:
     if DEBUG:
         ALLOWED_CLIENT_HOSTS = _DEFAULT_CLIENT_HOSTS
