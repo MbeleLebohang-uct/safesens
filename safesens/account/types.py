@@ -11,7 +11,7 @@ from . import models
 
 @key("id")
 @key("email")
-class UserType(CountableDjangoObjectType):
+class User(CountableDjangoObjectType):
     permissions = graphene.List(
         PermissionDisplay, description="List of user's permissions."
     )

@@ -28,11 +28,16 @@ from ...core.types import Output
 from ...core.utils.url import validate_safesens_url
 
 from ..models import User
-from ..types import UserType
+from ..types import User as UserType
 from ..enums import UserRoleEnum
 from ..emails import send_account_confirmation_email
 from ..utils import get_user_permissions
 from .. import UserRole
+
+from .base import (
+    BaseAccountCreate,
+    UserCreateInput
+)
 
 
 class AccountRegisterInput(graphene.InputObjectType):
@@ -141,6 +146,30 @@ class AccountRegister(Output, ModelMutation):
         super().populate_required_fields(info, instance, data)
 
 
+class AccountUpdate(BaseAccountCreate):
+    class Arguments:
+        input = UserCreateInput(
+            description="Fields required to update the account of the logged-in user.",
+            required=True,
+        )
+
+    class Meta:
+        description = "Updates the account of the logged-in user."
+        exclude = ["password"]
+        model = User
+        error_type_class = AccountError
+        error_type_field = "account_errors"
+
+    @classmethod
+    def check_permissions(cls, context):
+        return context.user.is_authenticated
+
+    @classmethod
+    def perform_mutation(cls, root, info, **data):
+        user = info.context.user
+        data["id"] = graphene.Node.to_global_id("User", user.id)
+        return super().perform_mutation(root, info, **data)
+
 class CreateToken(relay.JSONWebTokenMutation):
     """Mutation that authenticates a user and returns token and user data.
 
@@ -187,6 +216,7 @@ class CreateToken(relay.JSONWebTokenMutation):
     @classmethod
     def resolve(cls, root, info, **kwargs):
         return cls(user=info.context.user, account_errors=[])
+
 
 class VerifyToken(Verify):
     """Mutation that confirms if token is valid and also returns user data."""

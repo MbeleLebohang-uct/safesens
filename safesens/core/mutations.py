@@ -146,19 +146,18 @@ class BaseMutation(graphene.Mutation):
     def get_node_or_error(cls, info, node_id, field="id", only_type=None, qs=None):
         if not node_id:
             return None
-
+        
         try:
             if only_type is not None:
                 pk = from_global_id_strict_type(node_id, only_type, field=field)
             else:
                 # FIXME: warn when supplied only_type is None?
                 only_type, pk = graphene.Node.from_global_id(node_id)
-
             if isinstance(only_type, str):
                 only_type = info.schema.get_type(only_type).graphene_type
-
             node = cls.get_node_by_pk(info, graphene_type=only_type, pk=pk, qs=qs)
         except (AssertionError, GraphQLError) as e:
+
             raise ValidationError(
                 {field: ValidationError(str(e), code="graphql_error")}
             )
@@ -171,6 +170,7 @@ class BaseMutation(graphene.Mutation):
                         )
                     }
                 )
+
         return node
 
 
