@@ -7,6 +7,7 @@ import ast
 import warnings
 
 from django.utils.timezone import timedelta
+from django.core.exceptions import ImproperlyConfigured
 
 def get_list(text):
     return [item.strip() for item in text.split(",")]
