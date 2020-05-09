@@ -12,6 +12,8 @@ class Address(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        verbose_name = 'Address'
+        verbose_name_plural = 'Addresses'
 
     @property
     def full_name(self):
