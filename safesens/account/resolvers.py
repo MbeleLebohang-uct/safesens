@@ -10,7 +10,7 @@ from .sorters import (
 
 from ..core.utils import (
     filter_by_query_param,
-    filter_by_manager_param,
+    filter_by_role_param,
     sort_queryset
 )
 
@@ -46,9 +46,9 @@ def resolve_own_users(info, query, sort_by=None, **_kwargs):
     current_user = info.context.user
     
     if current_user.role != UserRole.TECHNICIAN:
-        qs = User.objects.all()
+        qs = info.context.user.user_set.all()
 
-        qs = filter_by_manager_param(queryset=qs, manager=current_user)
+        qs = filter_by_role_param(queryset=qs, role=current_user)
 
         qs = sort_users(qs, sort_by)
         qs = qs.distinct()

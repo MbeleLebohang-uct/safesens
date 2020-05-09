@@ -82,15 +82,15 @@ def filter_by_query_param(queryset, query, search_fields):
         return queryset.filter(query_objects).distinct()
     return queryset
 
-def filter_by_manager_param(queryset, manager):
+def filter_by_role_param(queryset, role):
     """Filter queryset according to given parameters.
 
     Keyword Arguments:
         queryset - queryset to be filtered
-        manager - manager user
+        role - user role
 
     """
-    query_objects = Q(manager=manager)
+    query_objects = Q(role=role)
     return queryset.filter(query_objects)
 
 def sort_queryset(

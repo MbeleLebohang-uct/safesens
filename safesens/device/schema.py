@@ -1,5 +1,10 @@
 import graphene
-from django.db.models import Q
+
+from graphql_jwt.decorators import login_required
+from graphql_jwt.exceptions import PermissionDenied
+
+from ..core.fields import FilterInputConnectionField
+
 from .models import Device
 from .types import Device as DeviceType
 
@@ -9,17 +14,52 @@ from .mutations.device import (
     DeviceUpdate
 )
 
+from .filters import (
+    DeviceFilterInput,
+)
+
+from .sorters import (
+    DeviceOrder,
+)
+
+from .resolvers import (
+    resolve_devices,
+)
+
+
 class DeviceQuery(graphene.ObjectType):
-    device = graphene.Field(DeviceType, imei=graphene.String())
+    device = graphene.Field(
+        DeviceType,
+        id=graphene.Argument(
+            graphene.ID, description="ID of the device.", required=True
+        ),
+        description="Look up a device that belong to authenticate user by ID.",
+    )
 
-    def resolve_device(self, info, imei=None, **kwargs):
-        if imei:
-            return Device.objects.get(Q(imei=imei))
+    devices = FilterInputConnectionField(
+        DeviceType,
+        filter=DeviceFilterInput(description="Filtering options for devices."),
+        sort_by=DeviceOrder(description="Sort devices."),
+        description="List of devices that are belong to the authenticated user.",
+    )
 
-        return None
+    @login_required
+    def resolve_device(self, info, id):
+        device = graphene.Node.get_node_from_global_id(info, id, DeviceType)
+
+        try:
+            info.context.user.devices.get(imei=device.imei)
+        except Device.DoesNotExist:
+            raise PermissionDenied()
+        
+        return device
+
+    def resolve_devices(self, info, **kwargs):
+        return resolve_devices(info, **kwargs)
 
 class DeviceMutation(graphene.ObjectType):
     device_assign_user = DeviceAssignUser.Field()
     device_unassign_user = DeviceUnassignUser.Field()
 
     device_update = DeviceUpdate.Field()
+    

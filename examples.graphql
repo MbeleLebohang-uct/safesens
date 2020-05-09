@@ -1,4 +1,157 @@
 # query{
+#   device(id: "RGV2aWNlOjI="){
+#     id
+#     imei
+#     unitName
+#   }
+# }
+
+
+# query{
+#   devices(first: 2){
+#     edges{
+#       cursor
+#       node{
+#         id
+#         imei
+#         unitName
+#       }
+#     }
+#   	pageInfo{
+#       hasNextPage
+#       hasPreviousPage
+#       endCursor
+#       startCursor
+#   	}
+#   }
+# }
+
+
+# mutation{
+#   deviceUpdate(
+#     id: "RGV2aWNlOjI=",
+#     input: {
+#       unitName: "Kovco Office Cape"
+#     }
+#   )
+#   {
+#     device{
+#       imei
+#       unitName
+#     }
+#   }
+# }
+
+# mutation{
+#   deviceUnassignUser(deviceId: "RGV2aWNlOjI=", userId: "VXNlcjoy"){
+#     device{
+#       imei
+#       users(first: 5){
+#         edges{
+#           node{
+#             email
+#             role
+#           }
+#         }
+#       }
+#     }
+#     deviceErrors{
+#       field
+#       message
+#       code
+#     }
+#   }
+# }
+
+
+# mutation{
+#   deviceAssignUser(deviceId: "RGV2aWNlOjI=", userId: "VXNlcjoy"){
+#     device{
+#       imei
+#       users(first: 5){
+#         edges{
+#           node{
+#             email
+#             role
+#           }
+#         }
+#       }
+#     }
+#     deviceErrors{
+#       field
+#       message
+#       code
+#     }
+#   }
+# }
+
+
+# query{
+#   me{
+#     email
+#     userSet(first: 1){
+#       edges{
+#         node{
+#           id
+#           email
+#         }
+#       }
+#     }
+#     devices(first: 3){
+#       edges{
+#         node{
+#           id
+#           imei
+#         }
+#       }
+#     }
+#   }
+# }
+
+
+
+# mutation{
+#   accountUpdate(
+#     input:{
+#       homeDeviceImei: "42655174852111"
+#     }
+#   ){
+#     accountErrors{
+#       field
+#       message
+#       code
+#     }
+#     user{
+#       email
+#       lastName
+#       firstName
+#       homeDeviceImei
+#       role
+#       avatar{
+#         url
+#         alt
+#       }
+#       user{
+        
+#       }
+#       devices{
+#         edges{
+#           node{
+#             imei
+#             unitName
+#           }
+#         }
+#       }
+#     }
+#   }
+# }
+
+
+
+
+
+
+# query{
 #   ownUsers(first: 5){
 #   	edges{
 #    		cursor
