@@ -1,3 +1,4 @@
+import binascii
 import graphene
 
 from graphene import ObjectType
@@ -37,7 +38,6 @@ def from_global_id_strict_type (
                 )
             }
         ) from exc
-
     if str(_type) != str(only_type):
         raise ValidationError(
             {field: ValidationError(f"Must receive a {only_type} id", code="invalid")}

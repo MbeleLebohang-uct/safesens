@@ -17,6 +17,7 @@ class AccountPermissions(BasePermissionEnum):
 
 class DevicePermissions(BasePermissionEnum):
     MANAGE_DEVICES = "device.manage_devices"
+    ASSIGN_DEVICES = "device.assign_devices"
 
 PERMISSIONS_ENUMS = [
     DevicePermissions,

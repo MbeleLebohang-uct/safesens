@@ -1,11 +1,14 @@
 import graphene
 
 from ..account import error_codes as account_error_codes
+from ..device import error_codes as device_error_codes 
 from .permissions import get_permissions_enum_list
 
 PermissionEnum = graphene.Enum("PermissionEnum", get_permissions_enum_list())
 
 AccountErrorCode = graphene.Enum.from_enum(account_error_codes.AccountErrorCode)
+
+DeviceErrorCode = graphene.Enum.from_enum(device_error_codes.DeviceErrorCode)
 
 class OrderDirection(graphene.Enum):
     ASC = ""

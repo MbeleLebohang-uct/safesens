@@ -13,11 +13,20 @@ def create_jwt_payload(user, context=None):
 def get_user_permissions(role):
     permissions = []
     if role == UserRole.KOVCO_STAFF:
-        permissions = [Permission.objects.get(codename=AccountPermissions.MANAGE_STAFF.codename)]
+        permissions = [
+            Permission.objects.get(codename=AccountPermissions.MANAGE_STAFF.codename),
+            Permission.objects.get(codename=DevicePermissions.ASSIGN_DEVICES.codename)
+        ]
     elif role == UserRole.CONTRACTOR:
-        permissions = [Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR.codename)]
+        permissions = [
+            Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR.codename),
+            Permission.objects.get(codename=DevicePermissions.ASSIGN_DEVICES.codename)
+        ]
     elif role == UserRole.CONTRACTOR_CUSTOMER:
-        permissions = [Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR_CUSTOMER.codename)]
+        permissions = [
+            Permission.objects.get(codename=AccountPermissions.IS_CONTRACTOR_CUSTOMER.codename),
+            Permission.objects.get(codename=DevicePermissions.ASSIGN_DEVICES.codename)
+        ]
     elif role == UserRole.TECHNICIAN:
         permissions = [Permission.objects.get(codename=AccountPermissions.IS_TECHNICIAN.codename)]
 

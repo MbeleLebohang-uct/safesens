@@ -1,30 +1,22 @@
 import graphene
-import django_filters
-from graphene_django import DjangoObjectType
-from graphene_django.filter import DjangoFilterConnectionField
-from graphql import GraphQLError
-
-from ..account.models import User
+from django.db.models import Q
 from .models import Device
+from .types import Device as DeviceType
 
-class DeviceFilter(django_filters.FilterSet):
-    class Meta:
-        model = Device
-        fields = ['imei']
-
-class DeviceNode(DjangoObjectType):
-    class Meta:
-        model = Device
-        fields = []
-        interfaces = (graphene.relay.Node, )
+from .mutations.device import (
+    DeviceAssignUser,
+    DeviceUnassignUser
+)
 
 class DeviceQuery(graphene.ObjectType):
-    user_devices = DjangoFilterConnectionField(DeviceNode, filterset_class=DeviceFilter)
+    device = graphene.Field(DeviceType, imei=graphene.String())
 
-    def resolve_user_devices(self, info, **kwargs):
-        current_user = info.context.user
-        if not current_user.is_authenticated:
-            raise GraphQLError("Permision Denied: User not authenticated.")
+    def resolve_device(self, info, imei=None, **kwargs):
+        if imei:
+            return Device.objects.get(Q(imei=imei))
 
-        return current_user.device_set.all()
-            
+        return None
+
+class DeviceMutation(graphene.ObjectType):
+    device_assign_user = DeviceAssignUser.Field()
+    device_unassign_user = DeviceUnassignUser.Field()

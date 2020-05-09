@@ -27,6 +27,8 @@ from ...core.types.exceptions import (
 from ...core.types import Output
 from ...core.utils.url import validate_safesens_url
 
+from ...decorators import one_of_permissions_required
+
 from ..models import User
 from ..types import User as UserType
 from ..enums import UserRoleEnum
@@ -72,10 +74,13 @@ class AccountRegister(Output, ModelMutation):
         model = User
         error_type_class = AccountError
         error_type_field = "account_errors"
-        permissions = (AccountPermissions.MANAGE_STAFF, AccountPermissions.IS_CONTRACTOR, AccountPermissions.IS_CONTRACTOR_CUSTOMER,)
+
 
     @classmethod
     @login_required
+    @one_of_permissions_required(
+        [AccountPermissions.MANAGE_STAFF, AccountPermissions.IS_CONTRACTOR, AccountPermissions.IS_CONTRACTOR_CUSTOMER]
+    )
     def mutate(cls, root, info, **data):
         response = super().mutate(root, info, **data)
         response.requires_confirmation = settings.ENABLE_ACCOUNT_CONFIRMATION_BY_EMAIL

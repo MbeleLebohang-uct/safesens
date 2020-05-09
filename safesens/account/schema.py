@@ -84,3 +84,4 @@ class AccountMutation(graphene.ObjectType):
     account_confirm = ConfirmAccount.Field()
 
     account_update = AccountUpdate.Field()
+    
