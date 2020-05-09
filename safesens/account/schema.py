@@ -7,11 +7,12 @@ from graphql_jwt.decorators import login_required
 from ..core.fields import FilterInputConnectionField
 from ..core.types import FilterInputObjectType
 
-from .types import UserType
+from .types import User as UserType
 from .mutations.account import (
     CreateToken, 
     VerifyToken, 
-    AccountRegister
+    AccountRegister,
+    AccountUpdate
 )
 
 from .mutations.base import (
@@ -75,10 +76,12 @@ class AccountQuery(graphene.ObjectType):
 
 
 class AccountMutation(graphene.ObjectType):
-    account_register = AccountRegister.Field()
-    account_confirm = ConfirmAccount.Field()
-
     token_create = CreateToken.Field()
     token_verify = VerifyToken.Field()
     token_refresh = graphql_jwt.Refresh.Field()
      
+    account_register = AccountRegister.Field()
+    account_confirm = ConfirmAccount.Field()
+
+    account_update = AccountUpdate.Field()
+    

@@ -1,7 +1,7 @@
 import graphene
 
 from safesens.account.schema import AccountQuery, AccountMutation
-from safesens.device.schema import DeviceQuery
+from safesens.device.schema import DeviceQuery, DeviceMutation
 from safesens.event.schema import EventQuery
 
 
@@ -13,7 +13,8 @@ class Query(
     pass
 
 class Mutation(
-    AccountMutation
+    AccountMutation,
+    DeviceMutation
 ):
     pass
 

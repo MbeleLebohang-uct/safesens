@@ -1,30 +1,65 @@
 import graphene
-import django_filters
-from graphene_django import DjangoObjectType
-from graphene_django.filter import DjangoFilterConnectionField
-from graphql import GraphQLError
 
-from ..account.models import User
+from graphql_jwt.decorators import login_required
+from graphql_jwt.exceptions import PermissionDenied
+
+from ..core.fields import FilterInputConnectionField
+
 from .models import Device
+from .types import Device as DeviceType
 
-class DeviceFilter(django_filters.FilterSet):
-    class Meta:
-        model = Device
-        fields = ['imei']
+from .mutations.device import (
+    DeviceAssignUser,
+    DeviceUnassignUser,
+    DeviceUpdate
+)
 
-class DeviceNode(DjangoObjectType):
-    class Meta:
-        model = Device
-        fields = []
-        interfaces = (graphene.relay.Node, )
+from .filters import (
+    DeviceFilterInput,
+)
+
+from .sorters import (
+    DeviceOrder,
+)
+
+from .resolvers import (
+    resolve_devices,
+)
+
 
 class DeviceQuery(graphene.ObjectType):
-    user_devices = DjangoFilterConnectionField(DeviceNode, filterset_class=DeviceFilter)
+    device = graphene.Field(
+        DeviceType,
+        id=graphene.Argument(
+            graphene.ID, description="ID of the device.", required=True
+        ),
+        description="Look up a device that belong to authenticate user by ID.",
+    )
 
-    def resolve_user_devices(self, info, **kwargs):
-        current_user = info.context.user
-        if not current_user.is_authenticated:
-            raise GraphQLError("Permision Denied: User not authenticated.")
+    devices = FilterInputConnectionField(
+        DeviceType,
+        filter=DeviceFilterInput(description="Filtering options for devices."),
+        sort_by=DeviceOrder(description="Sort devices."),
+        description="List of devices that are belong to the authenticated user.",
+    )
 
-        return current_user.device_set.all()
-            
+    @login_required
+    def resolve_device(self, info, id):
+        device = graphene.Node.get_node_from_global_id(info, id, DeviceType)
+
+        try:
+            info.context.user.devices.get(imei=device.imei)
+        except Device.DoesNotExist:
+            raise PermissionDenied()
+        
+        return device
+
+    def resolve_devices(self, info, **kwargs):
+        return resolve_devices(info, **kwargs)
+
+class DeviceMutation(graphene.ObjectType):
+    device_assign_user = DeviceAssignUser.Field()
+    device_unassign_user = DeviceUnassignUser.Field()
+
+    device_update = DeviceUpdate.Field()
+    

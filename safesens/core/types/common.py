@@ -2,6 +2,7 @@ import graphene
 
 from ..enums import (
     AccountErrorCode,
+    DeviceErrorCode,
     PermissionEnum,
 )
 
@@ -36,6 +37,10 @@ class Error(graphene.ObjectType):
 
 class AccountError(Error):
     code = AccountErrorCode(description="The error code.", required=True)
+
+
+class DeviceError(Error):
+    code = DeviceErrorCode(description="The error code.", required=True)
 
 
 class PermissionDisplay(graphene.ObjectType):

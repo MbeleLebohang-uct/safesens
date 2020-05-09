@@ -102,4 +102,8 @@ class Device(models.Model):
                 DevicePermissions.MANAGE_DEVICES.codename,
                 pgettext_lazy("Permission description", "Manage devices."),
             ),
+            (
+                DevicePermissions.ASSIGN_DEVICES.codename,
+                pgettext_lazy("Permission description", "Assign devices to other users."),
+            )
         )

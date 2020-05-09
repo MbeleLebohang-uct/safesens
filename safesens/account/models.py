@@ -87,7 +87,7 @@ class User(PermissionsMixin, AbstractBaseUser):
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
     home_device_imei = models.CharField("Home device imei", max_length=50, default="", blank=True)
 
-    manager = models.ForeignKey('self', null=True, related_name='user', on_delete=models.CASCADE)
+    manager = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
 
     avatar = VersatileImageField(upload_to="user-avatars", blank=True, null=True)
     address = models.OneToOneField(

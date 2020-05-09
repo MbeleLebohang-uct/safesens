@@ -1,4 +1,7 @@
 import graphene
+
+from django.db import transaction
+
 from graphene import ObjectType
 from graphene.types.mutation import MutationOptions
 from graphene_django.registry import get_global_registry
@@ -146,17 +149,14 @@ class BaseMutation(graphene.Mutation):
     def get_node_or_error(cls, info, node_id, field="id", only_type=None, qs=None):
         if not node_id:
             return None
-
         try:
             if only_type is not None:
                 pk = from_global_id_strict_type(node_id, only_type, field=field)
             else:
                 # FIXME: warn when supplied only_type is None?
                 only_type, pk = graphene.Node.from_global_id(node_id)
-
             if isinstance(only_type, str):
                 only_type = info.schema.get_type(only_type).graphene_type
-
             node = cls.get_node_by_pk(info, graphene_type=only_type, pk=pk, qs=qs)
         except (AssertionError, GraphQLError) as e:
             raise ValidationError(
@@ -244,7 +244,7 @@ class BaseMutation(graphene.Mutation):
 
 
     @classmethod
-    def check_permissions(cls, context, permissions=None):
+    def check_permissions(cls, context, permissions=None, **data):
         """Determine whether user or service account has rights to perform this mutation.
 
         Default implementation assumes that account is allowed to perform any
@@ -253,20 +253,29 @@ class BaseMutation(graphene.Mutation):
 
         The `context` parameter is the Context instance associated with the request.
         """
+
         permissions = permissions or cls._meta.permissions
-        
         if not permissions:
             return True
-        
-        for permission in permissions:
-            if context.user.has_perm(permission.value):
-                return True
-        
+        if context.user.has_perms(permissions):
+            return True
+
         return False
+
+        # permissions = permissions or cls._meta.permissions
+        
+        # if not permissions:
+        #     return True
+        
+        # for permission in permissions:
+        #     if context.user.has_perm(permission.value):
+        #         return True
+        
+        # return False
 
     @classmethod
     def mutate(cls, root, info, **data):
-        if not cls.check_permissions(info.context):
+        if not cls.check_permissions(info.context, **data):
             raise PermissionDenied()
 
         try:
@@ -401,6 +410,7 @@ class ModelMutation(BaseMutation):
         return cls(**{cls._meta.return_field_name: instance})
 
     @classmethod
+    @transaction.atomic
     def save(cls, info, instance, cleaned_input):
         instance.save()
 
