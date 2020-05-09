@@ -1,4 +1,7 @@
 import graphene
+
+from django.db import transaction
+
 from graphene import ObjectType
 from graphene.types.mutation import MutationOptions
 from graphene_django.registry import get_global_registry
@@ -241,7 +244,7 @@ class BaseMutation(graphene.Mutation):
 
 
     @classmethod
-    def check_permissions(cls, context, permissions=None):
+    def check_permissions(cls, context, permissions=None, **data):
         """Determine whether user or service account has rights to perform this mutation.
 
         Default implementation assumes that account is allowed to perform any
@@ -272,7 +275,7 @@ class BaseMutation(graphene.Mutation):
 
     @classmethod
     def mutate(cls, root, info, **data):
-        if not cls.check_permissions(info.context):
+        if not cls.check_permissions(info.context, **data):
             raise PermissionDenied()
 
         try:
@@ -407,6 +410,7 @@ class ModelMutation(BaseMutation):
         return cls(**{cls._meta.return_field_name: instance})
 
     @classmethod
+    @transaction.atomic
     def save(cls, info, instance, cleaned_input):
         instance.save()
 

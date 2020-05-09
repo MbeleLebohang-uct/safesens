@@ -5,7 +5,8 @@ from .types import Device as DeviceType
 
 from .mutations.device import (
     DeviceAssignUser,
-    DeviceUnassignUser
+    DeviceUnassignUser,
+    DeviceUpdate
 )
 
 class DeviceQuery(graphene.ObjectType):
@@ -20,3 +21,5 @@ class DeviceQuery(graphene.ObjectType):
 class DeviceMutation(graphene.ObjectType):
     device_assign_user = DeviceAssignUser.Field()
     device_unassign_user = DeviceUnassignUser.Field()
+
+    device_update = DeviceUpdate.Field()

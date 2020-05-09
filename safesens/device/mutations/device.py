@@ -1,8 +1,12 @@
 import graphene
 
-from ...core.mutations import BaseMutation
+from graphql_jwt.decorators import login_required
+
+from ...core.mutations import BaseMutation, ModelMutation
 from ...core.permissions import DevicePermissions
 from ...core.types.common import DeviceError
+from ...core.utils import from_global_id_strict_type
+
 
 from ..types import Device as DeviceType
 from ..error_codes import DeviceErrorCode
@@ -10,6 +14,7 @@ from ..models import Device
 
 from ...account.types import User as UserType
 
+from .base import DeviceInput
 
 class DeviceAssignUser(BaseMutation):
     device = graphene.Field(DeviceType, description="Device to which the user were assigned.")
@@ -32,7 +37,7 @@ class DeviceAssignUser(BaseMutation):
         permissions = (DevicePermissions.MANAGE_DEVICES, DevicePermissions.ASSIGN_DEVICES)
 
     @classmethod
-    def check_permissions(cls, context):
+    def check_permissions(cls, context, **data):
         return context.user.is_authenticated
 
     @classmethod
@@ -85,7 +90,7 @@ class DeviceUnassignUser(BaseMutation):
         permissions = (DevicePermissions.MANAGE_DEVICES, DevicePermissions.ASSIGN_DEVICES)
 
     @classmethod
-    def check_permissions(cls, context):
+    def check_permissions(cls, context, **data):
         return context.user.is_authenticated
 
     @classmethod
@@ -123,6 +128,45 @@ class DeviceUnassignUser(BaseMutation):
             ]
             return cls(device=None, device_errors=device_errors)
 
-        
         user.devices.remove(device)
         return cls(device=device, device_errors=[])
+
+
+class DeviceUpdate(ModelMutation):
+    class Arguments:
+        id = graphene.ID(required=True, description="ID of the device to update.")
+        input = DeviceInput(
+            required=True, description="Fields required to update the device."
+        )
+
+    class Meta:
+        description = "Updates an existing device."
+        model = Device
+        permissions = (DevicePermissions.MANAGE_DEVICES,)
+        error_type_class = DeviceError
+        error_type_field = "device_errors"
+
+    @classmethod
+    def clean_input(cls, info, instance, data):
+        cleaned_input = super().clean_input(info, instance, data)
+        return cleaned_input
+
+    @classmethod
+    def check_permissions(cls, context, **data):
+        if not context.user.is_authenticated:
+            return False
+
+        device_pk = from_global_id_strict_type(data["id"], only_type=DeviceType, field="id")
+
+        try:
+            context.user.devices.get(pk=device_pk)
+        except Device.DoesNotExist:
+            return False
+
+        return True
+
+    @classmethod
+    @login_required
+    def save(cls, info, instance, cleaned_input):
+        super().save(info, instance, cleaned_input)
+        

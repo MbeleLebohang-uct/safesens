@@ -166,10 +166,11 @@ class AccountUpdate(BaseAccountCreate):
         error_type_field = "account_errors"
 
     @classmethod
-    def check_permissions(cls, context):
+    def check_permissions(cls, context, **data):
         return context.user.is_authenticated
 
     @classmethod
+    @login_required
     def perform_mutation(cls, root, info, **data):
         user = info.context.user
         data["id"] = graphene.Node.to_global_id("User", user.id)
