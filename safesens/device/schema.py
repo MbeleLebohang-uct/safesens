@@ -53,7 +53,8 @@ class DeviceQuery(graphene.ObjectType):
             raise PermissionDenied()
         
         return device
-
+        
+    @login_required
     def resolve_devices(self, info, **kwargs):
         return resolve_devices(info, **kwargs)
 
