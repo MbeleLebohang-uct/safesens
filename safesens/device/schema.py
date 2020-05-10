@@ -36,6 +36,11 @@ class DeviceQuery(graphene.ObjectType):
         description="Look up a device that belong to authenticate user by ID.",
     )
 
+    home_device = graphene.Field(
+        DeviceType,
+        description="Get the home device for the authenticate user.",
+    )
+
     devices = FilterInputConnectionField(
         DeviceType,
         filter=DeviceFilterInput(description="Filtering options for devices."),
@@ -53,7 +58,22 @@ class DeviceQuery(graphene.ObjectType):
             raise PermissionDenied()
         
         return device
+
+    @login_required
+    def resolve_home_device(self, info):
+        home_device_imei = info.context.user.home_device_imei
+
+        if ((home_device_imei == None) or (home_device_imei == "")):
+            return None
+
+        device = None
+        try:
+            device = info.context.user.devices.get(imei=home_device_imei)
+        except Device.DoesNotExist:
+            return None
         
+        return device
+
     @login_required
     def resolve_devices(self, info, **kwargs):
         return resolve_devices(info, **kwargs)
