@@ -24,6 +24,7 @@ from .sorters import (
 
 from .resolvers import (
     resolve_devices,
+    resolve_home_device
 )
 
 
@@ -60,19 +61,8 @@ class DeviceQuery(graphene.ObjectType):
         return device
 
     @login_required
-    def resolve_home_device(self, info):
-        home_device_imei = info.context.user.home_device_imei
-
-        if ((home_device_imei == None) or (home_device_imei == "")):
-            return None
-
-        device = None
-        try:
-            device = info.context.user.devices.get(imei=home_device_imei)
-        except Device.DoesNotExist:
-            return None
-        
-        return device
+    def resolve_home_device(self, info, **kwargs):
+        return resolve_home_device(info, **kwargs)
 
     @login_required
     def resolve_devices(self, info, **kwargs):

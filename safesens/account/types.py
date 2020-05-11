@@ -7,6 +7,9 @@ from graphene_federation import key
 
 from ..core.types import PermissionDisplay, Image, Address as AddressType
 from ..core.connection import CountableDjangoObjectType
+
+from ..device.types import Device as DeviceType
+from ..device.resolvers import resolve_home_device
  
 from . import models
 
@@ -23,6 +26,10 @@ class User(CountableDjangoObjectType):
     address = gql_optimizer.field(
         graphene.Field(AddressType, description="User's address."),
         model_field="address",
+    )
+
+    home_device = gql_optimizer.field(
+        graphene.Field(DeviceType, description="User's home device.")
     )
 
     class Meta:
@@ -53,6 +60,10 @@ class User(CountableDjangoObjectType):
                 rendition_key_set="user_avatars",
                 info=info,
             )
+
+    @staticmethod
+    def resolve_home_device(root, info, **kwargs):
+        return resolve_home_device(info, **kwargs)
 
     @staticmethod
     def __resolve_reference(root, _info, **_kwargs):
