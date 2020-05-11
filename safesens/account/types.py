@@ -1,9 +1,11 @@
 import graphene
 from graphene import relay
+
+import graphene_django_optimizer as gql_optimizer
 from django.contrib.auth import get_user_model
 from graphene_federation import key
 
-from ..core.types import PermissionDisplay, Image
+from ..core.types import PermissionDisplay, Image, Address as AddressType
 from ..core.connection import CountableDjangoObjectType
  
 from . import models
@@ -17,6 +19,11 @@ class User(CountableDjangoObjectType):
     )
     is_staff = graphene.Boolean(description="Is the user a staff member or not.")
     avatar = graphene.Field(Image, size=graphene.Int(description="Size of the avatar."))
+
+    address = gql_optimizer.field(
+        graphene.Field(AddressType, description="User's address."),
+        model_field="address",
+    )
 
     class Meta:
         description = "Represents user data."
@@ -52,3 +59,4 @@ class User(CountableDjangoObjectType):
         if root.id is not None:
             return graphene.Node.get_node_from_global_id(_info, root.id)
         return get_user_model().objects.get(email=root.email)
+

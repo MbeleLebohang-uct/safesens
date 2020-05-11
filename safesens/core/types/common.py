@@ -1,5 +1,9 @@
 import graphene
 
+from graphene import relay
+from graphene_federation import key
+from graphene_django.utils import camelize
+
 from ..enums import (
     AccountErrorCode,
     DeviceErrorCode,
@@ -7,9 +11,14 @@ from ..enums import (
 )
 
 from ..templatetags.images import get_thumbnail
-from graphene_django.utils import camelize
+from ..connection import CountableDjangoObjectType
+from ..models import Address
 from .exceptions import WrongUsage
 
+
+class CountryDisplay(graphene.ObjectType):
+    code = graphene.String(description="Country code.", required=True)
+    country = graphene.String(description="Country name.", required=True)
 
 class Error(graphene.ObjectType):
     field = graphene.String(
@@ -78,3 +87,19 @@ class Image(graphene.ObjectType):
 class DateRangeInput(graphene.InputObjectType):
     gte = graphene.Date(description="Start date.", required=False)
     lte = graphene.Date(description="End date.", required=False)
+
+@key(fields="id")
+class Address(CountableDjangoObjectType):
+    country = graphene.Field(
+        CountryDisplay, required=True, description="Country name."
+    )
+
+    class Meta:
+        description = "Represents address data."
+        interfaces = [relay.Node]
+        model = Address
+        exclude = ("address", "unit_location", )
+       
+    @staticmethod
+    def resolve_country(root: Address, _info):
+        return CountryDisplay(code=root.country.code, country=root.country.name)
