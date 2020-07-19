@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include, url
 from django.conf.urls.static import static
-from safesens.pages.views import home_view
+from safesens.pages.views import home_view, documentation_view
 from django.contrib.staticfiles.views import serve
 from django.views.generic.base import RedirectView
 from graphene_django.views import GraphQLView
@@ -15,6 +15,7 @@ from .schema import schema
 
 urlpatterns = [
     path('', home_view, name='home'),
+    path('doc/', documentation_view, name='documentation'),
     path('account/', include('safesens.account.urls')),
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True,schema=schema))),
     path('admin/', admin.site.urls),

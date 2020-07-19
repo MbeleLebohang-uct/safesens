@@ -1,0 +1,38 @@
+{% extends "base/_application_navigation.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Header Back -->
+<div class="header-back header-back-light header-back-bg-app header-back-app">
+  <div class="header-back-container">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-sm-12">
+          <!-- Page Info -->
+          <div class="page-info page-info-simple">
+            <h1 class="page-title">Learn. Create. Impress.</h1>
+            <h2 class="page-description">Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, consequat ipsum, nec sagittis sem nibh id elit.</h2>
+          </div>
+          <!-- End Page Info -->
+          <!-- Buttons -->
+          <div class="header-back-buttons helper">
+            <a href="#" class="button rounded large white button-icon">
+              <i class="fa fa-apple"></i> AppStore </a>
+            <a href="#" class="button rounded large white button-icon">
+              <i class="fa fa-android"></i> Google play </a>
+          </div>
+          <!--End of Buttons -->
+        </div>
+        <div class="col-md-4 col-sm-12">
+          <div class="header-back-app-block">
+            <!-- Play button for video trigger -->
+            <!-- End of Play button for video trigger -->
+            <img src="{% static 'assets/img/app/landing-page.png' %}" class="header-back-app-img" alt="App screen"> </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Header Back -->
+
+{% endblock content %}

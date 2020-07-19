@@ -1,0 +1,399 @@
+{% extends "base/_application.html" %}
+{% load static %}
+
+{% block content %}
+<!-- One Page Sidebar -->
+<div class="one-page-sidebar">
+  <!-- One Page Sidebar Header -->
+  <div class="one-page-sidebar-header">
+    <!-- One Page Logo -->
+    <div class="one-page-logo">
+      <!-- Logo Image -->
+      <a href="#" class="logo-image ">
+        <img src="{% static 'assets/img/logos/logo-text.png' %}" alt="logo">
+      </a>
+      <!-- End of Logo Image -->
+    </div>
+    <!-- End of One Page Logo -->
+    <!-- One Page Meta -->
+    <div class="one-page-meta">
+      <ul class="one-page-meta-list">
+        <li>
+          <a href="#">
+            <i class="one-page-meta-list-icon fa fa-link"></i>Website</a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="one-page-meta-list-icon fa fa-github-alt"></i>GitHub</a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="one-page-meta-list-icon fa fa-question"></i>Support</a>
+        </li>
+      </ul>
+    </div>
+    <!-- End of One Page Meta -->
+  </div>
+  <!-- End of One Page Sidebar Header -->
+  <!-- One Page Nav -->
+  <div class="one-page-nav-wrapper js-custom-scrollbar">
+    <ul class="one-page-nav js-one-page-nav js-menu-vertical" data-prepend-to=".js-prepend-mobile-menu">
+      <li class="is-active">
+        <a href="#content" class="">
+          <span class="one-page-nav-icon">
+            <i class="fa fa-thumbs-o-up"></i>
+          </span>Main features</a>
+      </li>
+      <li class="">
+        <a href="#oauth" class="">
+          <span class="one-page-nav-icon">
+            <i class="fa fa-shield"></i>
+          </span>OAuth</a>
+      </li>
+    </ul>
+  </div>
+  <!-- End of One Page Nav -->
+  <!-- One Page Sidebar Footer -->
+  <footer class="one-page-sidebar-footer"><a href="#">VSArt</a>, all rights reserved. 2015 © </footer>
+  <!-- End of One Page Sidebar Footer -->
+</div>
+<!-- End of One Page Sidebar -->
+
+<div class="one-page-content">
+  <!-- Header -->
+  <header class="header large header-one-page ">
+    <div class="container-fluid container-spaced">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-5">
+          <div class="visible-sm-block visible-xs-block">
+            <!-- Logo Image -->
+            <a href="#" class="logo-image logo-animated">
+              <img src="{% static 'assets/img/logos/logo.png' %}" alt="logo">
+            </a>
+            <!-- End of Logo Image -->
+          </div>
+        </div>
+        <div class="col-md-9 col-sm-6 col-xs-7">
+          <!-- Menu -->
+          <nav class="right helper">
+            <ul class="menu sf-menu js-menu">
+              <li>
+                <a href="#">Home
+                  <span class="menu-label">NEW</span>
+                </a>
+                <ul>
+                  <li>
+                    <a href="#">One Page Docs</a>
+                    <ul>
+                      <li>
+                        <a href="#">Static Header</a>
+                      </li>
+                      <li>
+                        <a href="#">Sticky Header</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Menu</a>
+                    <ul>
+                      <li>
+                        <a href="#">Left - Off Canvas</a>
+                      </li>
+                      <li>
+                        <a href="#">Right - Off Canvas</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Static</a>
+                    <ul>
+                      <li>
+                        <a href="#">Subscribe</a>
+                      </li>
+                      <li>
+                        <a href="#">Web App</a>
+                      </li>
+                      <li>
+                        <a href="#">Mobile App</a>
+                      </li>
+                      <li>
+                        <a href="#">Software</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Video</a>
+                    <ul>
+                      <li>
+                        <a href="#">Background</a>
+                      </li>
+                      <li>
+                        <a href="#">Trigger Simple</a>
+                      </li>
+                      <li>
+                        <a href="#">Trigger Web</a>
+                      </li>
+                      <li>
+                        <a href="#">Trigger App</a>
+                      </li>
+                      <li>
+                        <a href="#">Trigger Soft</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Text Rotator</a>
+                  </li>
+                  <li>
+                    <a href="#">With Preloader</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">Pages</a>
+                <ul>
+                  <li>
+                    <a href="#">Panels</a>
+                  </li>
+                  <li>
+                    <a href="#">Blog</a>
+                    <ul>
+                      <li>
+                        <a href="#">Blog Grid</a>
+                      </li>
+                      <li>
+                        <a href="#">Blog List</a>
+                      </li>
+                      <li>
+                        <a href="#">Article</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Faq</a>
+                  </li>
+                  <li>
+                    <a href="#">Notification</a>
+                  </li>
+                  <li>
+                    <a href="#">Tutorial</a>
+                  </li>
+                  <li>
+                    <a href="#">Login</a>
+                  </li>
+                  <li>
+                    <a href="#">Register</a>
+                  </li>
+                  <li>
+                    <a href="#">404 Error</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">Elements</a>
+                <ul>
+                  <li>
+                    <a href="#">Buttons</a>
+                  </li>
+                  <li>
+                    <a href="#">Boxes</a>
+                  </li>
+                  <li>
+                    <a href="#">Code</a>
+                  </li>
+                  <li>
+                    <a href="#">Visual guide</a>
+                  </li>
+                  <li>
+                    <a href="#">Notes</a>
+                  </li>
+                  <li>
+                    <a href="#">File tree</a>
+                  </li>
+                  <li>
+                    <a href="#">Media</a>
+                  </li>
+                  <li>
+                    <a href="#">Book</a>
+                  </li>
+                  <li>
+                    <a href="#">Steps & Tabs</a>
+                  </li>
+                  <li>
+                    <a href="#">Misc</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#">Layouts</a>
+                <ul>
+                  <li>
+                    <a href="#">Views without sidebar</a>
+                  </li>
+                  <li>
+                    <a href="#">Views left sidebar</a>
+                  </li>
+                  <li>
+                    <a href="#">Views right sidebar</a>
+                  </li>
+                  <li>
+                    <a href="#">Full left sidebar</a>
+                    <ul>
+                      <li>
+                        <a href="#">Regular</a>
+                      </li>
+                      <li>
+                        <a href="#">Compact</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Full right sidebar</a>
+                    <ul>
+                      <li>
+                        <a href="#">Regular</a>
+                      </li>
+                      <li>
+                        <a href="#">Compact</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="{% url 'documentation' %}">Docs</a>
+              </li>
+              <li>
+                <a href="#">Contacts</a>
+              </li>
+            </ul>
+          </nav>
+          <!-- End of Menu -->
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- End of Header -->
+
+  <div id="content">
+    <div class="container-fluid container-spaced">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="js-prepend-mobile-menu">
+            <!-- The mobile menu will be prepended here -->
+          </div>
+
+          <!-- Category Info -->
+          <div class="category-info helper pt0" id="main-features">
+            <h3 class="category-title"> Main features
+              <!-- Fragment Identifier -->
+              <a class="fragment-identifier js-fragment-identifier fragment-identifier-scroll" href="#main-features">
+                <i class="fa fa-link"></i>
+              </a>
+              <!-- End of Fragment Identifier -->
+            </h3>
+            <h4 class="category-description">
+              Square APIs enable you to accept payments securely and integrate
+              your app with Square’s first party product ecosystem. Build full-featured
+              business apps for yourself or millions of Square sellers.
+            </h4>
+            <p class="category-content">
+              Our API Reference is organized around core business workflows: taking payments,
+              managing orders, syncing items and inventory with Square Point of Sale,
+              creating customer records, managing business locations, and enabling
+              Square sellers to use your app.
+              <br/>
+              <br/>
+              The Square API follows the general patterns of REST. If you’re new here,
+              you may want to check out our Getting Started Guide or learn more about
+              the Square Data Model.
+            </p>
+          </div>
+          <!-- End of Caregory Info -->
+
+          <!-- Features details -->
+          <div class="row">
+            <div class="col-md-4">
+              <!-- Box -->
+              <div class="box box-small-icon">
+                <h4 class="box-title">Authentication</h4>
+                <p class="box-description">
+                  The Square OAuth API lets applications request and obtain permission
+                  from a Square account to make API calls on behalf of that account.
+                  Applications can request individual permissions so that users do
+                  not need to grant full access.
+                </p>
+              </div>
+              <!-- End of Box -->
+            </div>
+            <div class="col-md-4">
+              <!-- Box -->
+              <div class="box box-small-icon">
+                <h4 class="box-title">Devices</h4>
+                <p class="box-description">
+                  The Orders API is your one-stop shop for adding rich functionality
+                  to payments. You can itemize payments using custom line items or
+                  catalog objects, send orders to physical Point of Sale devices to
+                  be fulfilled, attach a customer to a payment, and more.
+                </p>
+              </div>
+              <!-- End of Box -->
+            </div>
+            <div class="col-md-4">
+              <!-- Box -->
+              <div class="box box-small-icon">
+                <h4 class="box-title">Customers</h4>
+                <p class="box-description">
+                  Pull employee data into accounting and payroll systems with the Team API.
+                  The Team API allows applications to retrieve a roster of team members
+                  registered in the Square Point of Sale system, which can be useful in
+                  payroll and account contexts.
+                </p>
+              </div>
+              <!-- End of Box -->
+            </div>
+          </div>
+          <!-- End features details -->
+
+          <!-- Category Info -->
+          <div class="category-info helper pt0" id="main-features">
+            <h3 class="category-title">OAuth
+              <!-- Fragment Identifier -->
+              <a class="fragment-identifier js-fragment-identifier fragment-identifier-scroll" href="#oauth">
+                <i class="fa fa-link"></i>
+              </a>
+              <!-- End of Fragment Identifier -->
+            </h3>
+            <h4 class="category-description">Allow your application to gain programmatic access to other merchant accounts</h4>
+            <p class="category-content">
+              The Square OAuth API lets applications request and obtain permission from a
+              Square account to make API calls on behalf of that account. Applications
+              can request individual permissions so that users do not need to grant full
+              access to their Square accounts.
+            </p>
+          </div>
+          <!-- End of Caregory Info -->
+
+          <!-- API call snippet -->
+          <div class="code-highlight " data-label="">
+            <span class="js-copy-to-clipboard copy-code">copy</span>
+            <pre><code class="language-markup js-code">&lt;!-- Latest compiled and minified CSS --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://path.com/to/the/compiled/style.css&quot;&gt;
+
+&lt;!-- Optional theme --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://path.com/to/the/chosen/theme.css&quot;&gt;
+
+&lt;!-- Latest compiled and minified JavaScript --&gt;
+&lt;script src=&quot;https://path.com/to/the/JavaScript/library.js&quot;&gt;&lt;/script&gt;
+            </code></pre>
+          </div>
+          <!-- End API call snippet -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{% endblock content %}
