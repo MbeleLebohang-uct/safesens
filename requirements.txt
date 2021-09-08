@@ -21,7 +21,7 @@ importlib-metadata==1.6.0
 kombu==4.6.8
 mysqlclient==1.4.6
 opentracing==2.3.0
-Pillow==7.1.2
+Pillow==8.3.2
 promise==2.3
 PyJWT==1.7.1
 python-magic==0.4.15
