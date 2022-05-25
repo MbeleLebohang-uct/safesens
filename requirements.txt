@@ -23,7 +23,7 @@ mysqlclient==1.4.6
 opentracing==2.3.0
 Pillow==7.1.2
 promise==2.3
-PyJWT==1.7.1
+PyJWT==2.4.0
 python-magic==0.4.15
 pytz==2019.3
 Rx==1.6.1
